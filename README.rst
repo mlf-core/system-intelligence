@@ -1,19 +1,24 @@
+.. image:: https://user-images.githubusercontent.com/21954664/84388841-84b4cc80-abf5-11ea-83f3-b8ce8de36e25.png
+    :target: https://mlf-core.com
+    :alt: mlf-core logo
+
+|
+
 ===================
 system-intelligence
 ===================
 
-.. image:: https://github.com/zethson/system_intelligence/workflows/Build%20system_intelligence%20Package/badge.svg
-        :target: https://github.com/zethson/system_intelligence/workflows/Build%20system_intelligence%20Package/badge.svg
+.. image:: https://github.com/mlf-core/system_intelligence/workflows/Build%20system_intelligence%20Package/badge.svg
+        :target: https://github.com/mlf-core/system_intelligence/workflows/Build%20system_intelligence%20Package/badge.svg
         :alt: Github Workflow Build system_intelligence Status
 
-.. image:: https://github.com/zethson/system_intelligence/workflows/Run%20system_intelligence%20Tox%20Test%20Suite/badge.svg
-        :target: https://github.com/zethson/system_intelligence/workflows/Run%20system_intelligence%20Tox%20Test%20Suite/badge.svg
+.. image:: https://github.com/mlf-core/system_intelligence/workflows/Run%20system_intelligence%20Tox%20Test%20Suite/badge.svg
+        :target: https://github.com/mlf-core/system_intelligence/workflows/Run%20system_intelligence%20Tox%20Test%20Suite/badge.svg
         :alt: Github Workflow Tests Status
 
 .. image:: https://img.shields.io/pypi/v/system_intelligence.svg
         :target: https://img.shields.io/pypi/v/system_intelligence.svg
         :target: https://pypi.python.org/pypi/system_intelligence
-
 
 .. image:: https://readthedocs.org/projects/system-intelligence/badge/?version=latest
         :target: https://system-intelligence.readthedocs.io/en/latest/?badge=latest
