@@ -1,2 +1,6 @@
-
 click
+rich
+pint
+psutil
+py-cpuinfo
+pyudev
