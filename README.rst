@@ -24,6 +24,10 @@ system-intelligence
         :target: https://system-intelligence.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
+.. image:: https://codecov.io/gh/mlf-core/system-intelligence/branch/master/graph/badge.svg
+        :target: https://codecov.io/gh/mlf-core/system-intelligence
+        :alt: Codecov badge
+
 .. image:: https://flat.badgen.net/dependabot/thepracticaldev/dev.to?icon=dependabot
         :target: https://flat.badgen.net/dependabot/thepracticaldev/dev.to?icon=dependabot
         :alt: Dependabot Enabled
