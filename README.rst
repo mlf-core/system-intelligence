@@ -8,12 +8,12 @@
 system-intelligence
 ===================
 
-.. image:: https://github.com/mlf-core/system_intelligence/workflows/Build%20system_intelligence%20Package/badge.svg
-        :target: https://github.com/mlf-core/system_intelligence/workflows/Build%20system_intelligence%20Package/badge.svg
+.. image:: https://github.com/mlf-core/system-intelligence/workflows/Build%20system_intelligence%20Package/badge.svg
+        :target: https://github.com/mlf-core/system-intelligence/workflows/Build%20system_intelligence%20Package/badge.svg
         :alt: Github Workflow Build system_intelligence Status
 
-.. image:: https://github.com/mlf-core/system_intelligence/workflows/Run%20system_intelligence%20Tox%20Test%20Suite/badge.svg
-        :target: https://github.com/mlf-core/system_intelligence/workflows/Run%20system_intelligence%20Tox%20Test%20Suite/badge.svg
+.. image:: https://github.com/mlf-core/system-intelligence/workflows/Run%20system_intelligence%20Tox%20Test%20Suite/badge.svg
+        :target: https://github.com/mlf-core/system-intelligence/workflows/Run%20system_intelligence%20Tox%20Test%20Suite/badge.svg
         :alt: Github Workflow Tests Status
 
 .. image:: https://img.shields.io/pypi/v/system_intelligence.svg
@@ -23,6 +23,10 @@ system-intelligence
 .. image:: https://readthedocs.org/projects/system-intelligence/badge/?version=latest
         :target: https://system-intelligence.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
+
+.. image:: https://codecov.io/gh/mlf-core/system-intelligence/branch/master/graph/badge.svg
+        :target: https://codecov.io/gh/mlf-core/system-intelligence
+        :alt: Codecov badge
 
 .. image:: https://flat.badgen.net/dependabot/thepracticaldev/dev.to?icon=dependabot
         :target: https://flat.badgen.net/dependabot/thepracticaldev/dev.to?icon=dependabot
