@@ -2,14 +2,12 @@
 
 import importlib
 import itertools
-import os
 import pathlib
 import runpy
 import subprocess
 import sys
 import types
 import typing as t
-import unittest
 
 
 def run_program(*args, glob: bool = False):
@@ -57,34 +55,3 @@ def get_package_folder_name():
         and pathlib.Path(cwd, path, '__init__.py').is_file() and path.name != 'test']
     assert len(directories) == 2, directories
     return directories[0].name
-
-
-@unittest.skipUnless(os.environ.get('TEST_PACKAGING') or os.environ.get('CI'), 'skipping packaging tests for actual package')
-class IntergrationTests(unittest.TestCase):
-    """Test if the boilerplate can actually create a valid package."""
-    pkg_name = get_package_folder_name()
-
-    def test_build_binary(self):
-        run_module('setup', 'bdist')
-        self.assertTrue(os.path.isdir('dist'))
-
-    def test_build_wheel(self):
-        run_module('setup', 'bdist_wheel')
-        self.assertTrue(os.path.isdir('dist'))
-
-    def test_build_source(self):
-        run_module('setup', 'sdist', '--formats=gztar,zip')
-        self.assertTrue(os.path.isdir('dist'))
-
-    def test_install_code(self):
-        run_pip('install', '.')
-        run_pip('uninstall', '-y', self.pkg_name)
-
-    def test_pip_error(self):
-        with self.assertRaises(AssertionError):
-            run_pip('wrong_pip_command')
-
-    def test_setup_do_nothing_or_error(self):
-        run_module('setup', 'wrong_setup_command', run_name='__not_main__')
-        with self.assertRaises(SystemExit):
-            run_module('setup', 'wrong_setup_command')

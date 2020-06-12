@@ -3,7 +3,7 @@
 import collections.abc
 import unittest
 
-from system_query.all_info import query_all
+from system_intelligence.all_info import query_all
 
 
 class Tests(unittest.TestCase):

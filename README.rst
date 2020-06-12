@@ -8,12 +8,12 @@
 system-intelligence
 ===================
 
-.. image:: https://github.com/mlf-core/system_intelligence/workflows/Build%20system_intelligence%20Package/badge.svg
-        :target: https://github.com/mlf-core/system_intelligence/workflows/Build%20system_intelligence%20Package/badge.svg
+.. image:: https://github.com/mlf-core/system-intelligence/workflows/Build%20system_intelligence%20Package/badge.svg
+        :target: https://github.com/mlf-core/system-intelligence/workflows/Build%20system_intelligence%20Package/badge.svg
         :alt: Github Workflow Build system_intelligence Status
 
-.. image:: https://github.com/mlf-core/system_intelligence/workflows/Run%20system_intelligence%20Tox%20Test%20Suite/badge.svg
-        :target: https://github.com/mlf-core/system_intelligence/workflows/Run%20system_intelligence%20Tox%20Test%20Suite/badge.svg
+.. image:: https://github.com/mlf-core/system-intelligence/workflows/Run%20system_intelligence%20Tox%20Test%20Suite/badge.svg
+        :target: https://github.com/mlf-core/system-intelligence/workflows/Run%20system_intelligence%20Tox%20Test%20Suite/badge.svg
         :alt: Github Workflow Tests Status
 
 .. image:: https://img.shields.io/pypi/v/system_intelligence.svg

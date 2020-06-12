@@ -3,7 +3,7 @@
 import collections.abc
 import unittest
 
-from system_query.software_info import query_software
+from system_intelligence.software_info import query_software
 
 
 class Tests(unittest.TestCase):

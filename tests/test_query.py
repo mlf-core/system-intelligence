@@ -4,7 +4,7 @@ import sys
 import logging
 import unittest
 
-from system_query.query import query_and_export
+from system_intelligence.query import query_and_export
 
 _LOG = logging.getLogger(__name__)
 

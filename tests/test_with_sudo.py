@@ -5,7 +5,7 @@ import getpass
 import platform
 import unittest
 
-from system_query.all_info import query_all
+from system_intelligence.all_info import query_all
 
 
 @unittest.skipUnless(getpass.getuser() == 'root', 'skipping tests that require sudo')

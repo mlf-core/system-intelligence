@@ -2,8 +2,8 @@
 
 import unittest
 
-from system_query.available_features import CPU
-from system_query.cpu_info import _get_cache_size
+from system_intelligence.available_features import CPU
+from system_intelligence.cpu_info import _get_cache_size
 
 
 class Tests(unittest.TestCase):
