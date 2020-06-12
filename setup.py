@@ -54,7 +54,7 @@ setup(
     description="Query your system for all hardware and software related information.",
     entry_points={
         'console_scripts': [
-            'system_intelligence=system_intelligence.cli:main',
+            'system-intelligence=system_intelligence.cli:main',
         ],
     },
     install_requires=requirements,
@@ -62,7 +62,7 @@ setup(
     long_description=readme + '\n\n' + history,
     include_package_data=True,
     keywords='system_intelligence',
-    name='system_intelligence',
+    name='system-intelligence',
     packages=find_packages(include=['system_intelligence', 'system_intelligence.*']),
     package_data={
         module.__name__: walker(
