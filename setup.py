@@ -54,7 +54,7 @@ setup(
     description="Query your system for all hardware and software related information.",
     entry_points={
         'console_scripts': [
-            'system-intelligence=system_intelligence.cli:main',
+            'system-intelligence=system_intelligence.system_intelligence_cli:main',
         ],
     },
     install_requires=requirements,
