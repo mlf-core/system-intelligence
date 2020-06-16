@@ -8,8 +8,9 @@ import typing as t
 
 from .all_info import query_all
 from .cpu_info import query_cpu, print_cpu_info
-from .gpu_info import query_gpus
+from .gpu_info import query_gpus, print_gpu_info
 from .ram_info import query_ram
+from .software_info import query_software, print_software_info
 
 JSON_INDENT = 2
 
@@ -39,8 +40,12 @@ def query(query_scope: str, **kwargs) -> t.Any:
         print_cpu_info(info)
     elif query_scope == 'gpu':
         info = query_gpus(**kwargs)
+        print_gpu_info(info)
     elif query_scope == 'ram':
         info = query_ram(**kwargs)
+    elif query_scope == 'software':
+        info = query_software()
+        print_software_info(info)
     else:
         raise NotImplementedError(f'scope={query_scope}')
     return info

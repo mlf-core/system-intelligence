@@ -10,7 +10,7 @@ WD = os.path.dirname(__file__)
 
 
 @click.command()
-@click.argument('scope', type=click.Choice(['all', 'cpu', 'gpu', 'ram']), default='all')
+@click.argument('scope', type=click.Choice(['all', 'cpu', 'gpu', 'ram', 'software']), default='all')
 @click.option('--format', type=click.Choice(['raw', 'json']), default='raw',
               help='output format')
 @click.option('--target', type=str, default='stdout',

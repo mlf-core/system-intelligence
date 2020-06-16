@@ -3,7 +3,9 @@
 import logging
 import typing as t
 
+from rich.box import HEAVY_HEAD
 from rich.console import Console
+from rich.style import Style
 from rich.table import Table
 
 from .available_features import cpuinfo, pint, psutil, CPU, CPU_CLOCK, CPU_CORES
@@ -82,7 +84,10 @@ def query_cpu(**_) -> t.Mapping[str, t.Any]:
 
 
 def print_cpu_info(cpu_info: dict) -> None:
-    table = Table(title='CPU')
+    # Prettify cache
+    cpu_info['cache'] = cpu_info['cache'].replace('{', '').replace('}', '')
+
+    table = Table(title='[bold]Central Processing Unit', title_style='red', header_style=Style(color="red", bold=True), box=HEAVY_HEAD)
 
     table.add_column('Vendor ID', justify='left')
     table.add_column('Hardware', justify='left')
@@ -93,7 +98,7 @@ def print_cpu_info(cpu_info: dict) -> None:
     table.add_column('Clock', justify='left')
     table.add_column('Minimal Clock', justify='left')
     table.add_column('Maximal Clock', justify='left')
-    table.add_column('Cache', justify='left')
+    table.add_column('Cache', justify='left', no_wrap=True)
 
     table.add_row(*cpu_info.values())
 

@@ -5,10 +5,16 @@ import shutil
 import subprocess
 import typing as t
 
+from rich.box import HEAVY_HEAD
+from rich.style import Style
+from rich.table import Table
+from rich.console import Console
+
 _LOG = logging.getLogger(__name__)
 
 DEFAULT_VERSION_QUERY_FLAG = '--version'
 
+# Second argument overrides the default_version_query flag
 VERSION_QUERY_FLAGS = {
     # compilers
     'gcc': None,
@@ -28,17 +34,9 @@ VERSION_QUERY_FLAGS = {
     'mpifort': None,
     # python
     'python': None,
-    'python2': None,
-    'python3': None,
-    'python3.6': None,
-    'python3.7': None,
     'pip': None,
-    'pip2': None,
-    'pip3': None,
-    'pip3.6': None,
-    'pip3.7': None,
     # other
-    'java': '-version',
+    'java': None,
     'ruby': None,
     'nvcc': None,
     'mpirun': None,
@@ -46,7 +44,7 @@ VERSION_QUERY_FLAGS = {
 
 PYTHON_PACKAGES = [
     'chainer', 'Cython', 'h5py', 'ipython', 'mpi4py', 'Nuitka', 'numba', 'numpy',
-    'pandas', 'pycuda', 'pyopencl', 'scikit-learn', 'scipy', 'tensorflow']
+    'pandas', 'pycuda', 'pyopencl', 'scikit-learn', 'scipy', 'tensorflow', 'pytorch']
 
 
 def _run_version_query(cmd, **kwargs) -> t.Optional[str]:
@@ -84,15 +82,27 @@ def query_software():
         software_info[program] = {'path': path, 'version': version}
 
     # python packages
-    for py_ver in ('python', 'python2', 'python3', 'python3.6', 'python3.7'):
-        if py_ver not in software_info:
+    py_packages = {}
+    for package in PYTHON_PACKAGES:
+        version = _run_version_query(
+            f'python -m pip freeze | grep {package}', shell=True)
+        if version is None:
             continue
-        py_packages = {}
-        for package in PYTHON_PACKAGES:
-            version = _run_version_query(
-                '{} -m pip freeze | grep "{}"'.format(py_ver, package), shell=True)
-            if version is None:
-                continue
-            py_packages[package] = {'version': version}
-        software_info[py_ver]['packages'] = py_packages
+        py_packages[package] = {'version': version}
+    software_info['python']['packages'] = py_packages
+
     return software_info
+
+
+def print_software_info(software_info: dict):
+    table = Table(title='[bold]Installed Software', title_style='red', header_style=Style(color="red", bold=True), box=HEAVY_HEAD)
+
+    table.add_column('Software Name', justify='left')
+    table.add_column('Path', justify='left')
+    table.add_column('Version', justify='left')
+
+    for software_name, path_version in software_info.items():
+        table.add_row(software_name, path_version['path'], path_version['version'])
+
+    console = Console()
+    console.print(table)
