@@ -7,7 +7,7 @@ import sys
 import typing as t
 
 from .all_info import query_all
-from .cpu_info import query_cpu
+from .cpu_info import query_cpu, print_cpu_info
 from .gpu_info import query_gpus
 from .ram_info import query_ram
 
@@ -36,12 +36,13 @@ def query(query_scope: str, **kwargs) -> t.Any:
         info = query_all(**kwargs)
     elif query_scope == 'cpu':
         info = query_cpu(**kwargs)
+        print_cpu_info(info)
     elif query_scope == 'gpu':
         info = query_gpus(**kwargs)
     elif query_scope == 'ram':
         info = query_ram(**kwargs)
     else:
-        raise NotImplementedError('scope={}'.format(query_scope))
+        raise NotImplementedError(f'scope={query_scope}')
     return info
 
 

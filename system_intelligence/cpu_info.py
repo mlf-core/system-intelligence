@@ -3,6 +3,9 @@
 import logging
 import typing as t
 
+from rich.console import Console
+from rich.table import Table
+
 from .available_features import cpuinfo, pint, psutil, CPU, CPU_CLOCK, CPU_CORES
 
 _LOG = logging.getLogger(__name__)
@@ -33,8 +36,7 @@ def _get_cache_size(level: int, cpuinfo_data: dict) -> t.Optional[int]:
 
     If no units are provided, assume source data is in KiB.
     """
-    raw_value = cpuinfo_data.get(
-        'l{}_data_cache_size'.format(level), cpuinfo_data.get('l{}_cache_size'.format(level), None))
+    raw_value = cpuinfo_data.get(f'l{level}_data_cache_size', cpuinfo_data.get(f'l{level}_cache_size', None))
     if raw_value is None:
         return None
     assert isinstance(raw_value, str), (type(raw_value), raw_value)
@@ -65,11 +67,35 @@ def query_cpu(**_) -> t.Mapping[str, t.Any]:
     clock_current, clock_min, clock_max = query_cpu_clock()
     logical_cores, physical_cores = query_cpu_cores()
     cache = _get_cache_sizes(cpu)
+
     return {
-        'brand': cpu.get('brand', None),
-        'logical_cores': logical_cores,
-        'physical_cores': physical_cores,
-        'clock': clock_current,
-        'clock_min': clock_min,
-        'clock_max': clock_max,
-        'cache': cache}
+        'vendor_id_raw': cpu.get('vendor_id_raw'),
+        'hardware_raw': cpu.get('hardware_raw'),
+        'brand_raw': cpu.get('brand_raw'),
+        'arch': cpu.get('arch'),
+        'logical_cores': str(logical_cores),
+        'physical_cores': str(physical_cores),
+        'clock': str(clock_current),
+        'clock_min': str(clock_min),
+        'clock_max': str(clock_max),
+        'cache': str(cache)}
+
+
+def print_cpu_info(cpu_info: dict) -> None:
+    table = Table(title='CPU')
+
+    table.add_column('Vendor ID', justify='left')
+    table.add_column('Hardware', justify='left')
+    table.add_column('Brand', justify='left')
+    table.add_column('Architecture', justify='left')
+    table.add_column('Logical Cores', justify='left')
+    table.add_column('Physical Cores', justify='left')
+    table.add_column('Clock', justify='left')
+    table.add_column('Minimal Clock', justify='left')
+    table.add_column('Maximal Clock', justify='left')
+    table.add_column('Cache', justify='left')
+
+    table.add_row(*cpu_info.values())
+
+    console = Console()
+    console.print(table)
