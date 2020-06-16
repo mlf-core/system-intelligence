@@ -40,9 +40,9 @@ def query_gpu(device: 'cuda.Device') -> t.Mapping[str, t.Any]:
         return {
             'architecture': compute_capability_to_architecture[compute_capability[0]],
             'brand': device.name(),
+            'compute_capability': str(float('.'.join(str(_) for _ in compute_capability))),
             'memory': str(device.total_memory()),
             'memory_clock': str(attributes[cuda.device_attribute.MEMORY_CLOCK_RATE]),
-            'compute_capability': str(float('.'.join(str(_) for _ in compute_capability))),
             'clock': str(attributes[cuda.device_attribute.CLOCK_RATE]),
             'multiprocessors': str(multiprocessors),
             'cores': str(cuda_cores),

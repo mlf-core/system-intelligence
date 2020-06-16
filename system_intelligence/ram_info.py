@@ -5,7 +5,12 @@ import subprocess
 import typing as t
 from xml.etree import ElementTree as ET
 
+import click
+import xmltodict as xmltodict
+
 from .available_features import psutil, RAM_TOTAL
+from .process_util import is_process_accessible
+from .util.dict_util import flatten
 
 _LOG = logging.getLogger(__name__)
 
@@ -29,8 +34,16 @@ def query_ram(sudo: bool = False, **kwargs) -> t.Mapping[str, t.Any]:
 
 def query_ram_banks(sudo: bool = False, **_) -> t.List[t.Mapping[str, t.Any]]:
     """Extract information about RAM dice installed in the system."""
+    if not sudo:
+        click.echo(click.style('Run system-intelligence with sudo to enable more verbose RAM output', fg='green'))
+    if not is_process_accessible(['lshw']):
+        click.echo(click.style('lshw is not installed! Unable to fetch detailed RAM information.', fg='yellow'))
     try:
-        xml_root = parse_lshw(sudo=sudo)
+        xml_root, xml_dict = parse_lshw(sudo=sudo)
+        tmp = dict(xml_dict)['list']['node']
+        for el in tmp:
+            print(flatten(el))
+            print()
     except subprocess.TimeoutExpired:
         return []
     except subprocess.CalledProcessError:
@@ -53,9 +66,9 @@ def query_ram_banks(sudo: bool = False, **_) -> t.List[t.Mapping[str, t.Any]]:
 
 def parse_lshw(sudo: bool = False):
     """Get RAM information via lshw."""
-    cmd = (['sudo'] if sudo else []) + ['lshw', '-xml', '-quiet']
+    cmd = (['sudo'] if sudo else []) + ['lshw', '-c', 'memory', '-xml', '-quiet']
     result = subprocess.run(cmd, timeout=5, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    return ET.fromstring(result.stdout.decode())
+    return ET.fromstring(result.stdout.decode()), xmltodict.parse(result.stdout.decode())
 
 
 def query_ram_bank(node: ET.Element) -> t.Mapping[str, t.Any]:
@@ -63,9 +76,8 @@ def query_ram_bank(node: ET.Element) -> t.Mapping[str, t.Any]:
     bank_size = node.findall('./size')
     bank_clock = node.findall('./clock')
     if len(bank_size) != 1 or len(bank_clock) != 1:
-        _LOG.warning(
-            'there should be exactly one size and clock value for a bank'
-            ' but there are %i and %i respectively', len(bank_size), len(bank_clock))
+        _LOG.warning('there should be exactly one size and clock value for a bank'
+                     ' but there are %i and %i respectively', len(bank_size), len(bank_clock))
     _LOG.debug(ET.tostring(node, encoding='utf8', method='xml').decode())
     assert bank_size[0].text is not None
     ram_bank = {'memory': int(bank_size[0].text)}
