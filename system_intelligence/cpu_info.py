@@ -3,12 +3,10 @@
 import logging
 import typing as t
 
-from rich.box import HEAVY_HEAD
 from rich.console import Console
-from rich.style import Style
-from rich.table import Table
 
 from .available_features import cpuinfo, pint, psutil, CPU, CPU_CLOCK, CPU_CORES
+from .rich_util import create_styled_table
 
 _LOG = logging.getLogger(__name__)
 
@@ -87,7 +85,7 @@ def print_cpu_info(cpu_info: dict) -> None:
     # Prettify cache
     cpu_info['cache'] = cpu_info['cache'].replace('{', '').replace('}', '')
 
-    table = Table(title='[bold]Central Processing Unit', title_style='red', header_style=Style(color="red", bold=True), box=HEAVY_HEAD)
+    table = create_styled_table('Central Processing Unit')
 
     table.add_column('Vendor ID', justify='left')
     table.add_column('Hardware', justify='left')

@@ -5,10 +5,9 @@ import shutil
 import subprocess
 import typing as t
 
-from rich.box import HEAVY_HEAD
-from rich.style import Style
-from rich.table import Table
 from rich.console import Console
+
+from system_intelligence.rich_util import create_styled_table
 
 _LOG = logging.getLogger(__name__)
 
@@ -95,7 +94,7 @@ def query_software():
 
 
 def print_software_info(software_info: dict):
-    table = Table(title='[bold]Installed Software', title_style='red', header_style=Style(color="red", bold=True), box=HEAVY_HEAD)
+    table = create_styled_table('Installed Software')
 
     table.add_column('Software Name', justify='left')
     table.add_column('Path', justify='left')

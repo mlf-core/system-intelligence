@@ -2,14 +2,12 @@
 
 import typing as t
 
-from rich.box import HEAVY_HEAD
 from rich.console import Console
-from rich.style import Style
-from rich.table import Table
 
 from .available_features import cuda, GPU
 
 from .errors import QueryError
+from .rich_util import create_styled_table
 
 compute_capability_to_architecture = {
     2: 'Fermi',
@@ -77,7 +75,7 @@ def calculate_cuda_cores(compute_capability: t.Tuple[int, int], multiprocessors:
 
 
 def print_gpu_info(gpus_info: list):
-    table = Table(title='[bold]Graphical Processing Unit', title_style='red', header_style=Style(color="red", bold=True), box=HEAVY_HEAD)
+    table = create_styled_table('Graphical Processing Unit')
 
     table.add_column('Architecture', justify='left')
     table.add_column('Brand', justify='left')
