@@ -7,7 +7,7 @@ from rich.console import Console
 from .available_features import cuda, GPU
 
 from .errors import QueryError
-from .rich_util import create_styled_table
+from .util.rich_util import create_styled_table
 
 compute_capability_to_architecture = {
     2: 'Fermi',

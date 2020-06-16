@@ -6,7 +6,7 @@ import typing as t
 from rich.console import Console
 
 from .available_features import cpuinfo, pint, psutil, CPU, CPU_CLOCK, CPU_CORES
-from .rich_util import create_styled_table
+from .util.rich_util import create_styled_table
 
 _LOG = logging.getLogger(__name__)
 

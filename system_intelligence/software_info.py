@@ -7,7 +7,7 @@ import typing as t
 
 from rich.console import Console
 
-from system_intelligence.rich_util import create_styled_table
+from system_intelligence.util.rich_util import create_styled_table
 
 _LOG = logging.getLogger(__name__)
 

@@ -9,8 +9,8 @@ import click
 import xmltodict as xmltodict
 
 from .available_features import psutil, RAM_TOTAL
-from .process_util import is_process_accessible
 from .util.dict_util import flatten
+from .util.process_util import is_process_accessible
 
 _LOG = logging.getLogger(__name__)
 
