@@ -41,9 +41,9 @@ def query_ram_banks(sudo: bool = False, **_) -> t.List[t.Mapping[str, t.Any]]:
     try:
         xml_root, xml_dict = parse_lshw(sudo=sudo)
         tmp = dict(xml_dict)['list']['node']
-        for el in tmp:
-            print(flatten(el))
-            print()
+        # for el in tmp:
+        #     print(flatten(el))
+        #     print()
     except subprocess.TimeoutExpired:
         return []
     except subprocess.CalledProcessError:

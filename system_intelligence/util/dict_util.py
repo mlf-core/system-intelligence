@@ -1,4 +1,4 @@
-def flatten(d):
+def flatten(d: dict):
     """
     https://stackoverflow.com/questions/52081545/python-3-flattening-nested-dictionaries-and-lists-within-dictionaries
     """
