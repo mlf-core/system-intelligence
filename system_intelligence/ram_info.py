@@ -1,15 +1,14 @@
 """Functions to query system's RAM."""
 
 import logging
+import os
 import subprocess
 import typing as t
 from xml.etree import ElementTree as ET
 
 import click
-import xmltodict as xmltodict
 
 from .available_features import psutil, RAM_TOTAL
-from .util.dict_util import flatten
 from .util.process_util import is_process_accessible
 
 _LOG = logging.getLogger(__name__)
@@ -34,16 +33,12 @@ def query_ram(sudo: bool = False, **kwargs) -> t.Mapping[str, t.Any]:
 
 def query_ram_banks(sudo: bool = False, **_) -> t.List[t.Mapping[str, t.Any]]:
     """Extract information about RAM dice installed in the system."""
-    if not sudo:
+    if os.geteuid() != 0:
         click.echo(click.style('Run system-intelligence with sudo to enable more verbose RAM output', fg='green'))
     if not is_process_accessible(['lshw']):
         click.echo(click.style('lshw is not installed! Unable to fetch detailed RAM information.', fg='yellow'))
     try:
-        xml_root, xml_dict = parse_lshw(sudo=sudo)
-        tmp = dict(xml_dict)['list']['node']
-        # for el in tmp:
-        #     print(flatten(el))
-        #     print()
+        xml_root = parse_lshw(sudo=sudo)
     except subprocess.TimeoutExpired:
         return []
     except subprocess.CalledProcessError:
@@ -53,14 +48,16 @@ def query_ram_banks(sudo: bool = False, **_) -> t.List[t.Mapping[str, t.Any]]:
     except ET.ParseError:
         return []
     nodes = xml_root.findall('.//node')
-    _LOG.debug('%i nodes', len(nodes))
+    _LOG.debug(f'{len(nodes)} nodes')
     ram_banks = []
+    ram_cache = []
     for node in nodes:
         node_id = node.attrib['id']
-        _LOG.debug('%s', node_id)
-        if not node_id.startswith('bank'):
-            continue
-        ram_banks.append(query_ram_bank(node))
+        _LOG.debug(f'{node_id}')
+        if node_id.startswith('bank'):
+            ram_banks.append(query_ram_bank(node))
+        elif node_id.startswith('cache'):
+            ram_cache.append(query_ram_cache(node))
     return ram_banks
 
 
@@ -68,22 +65,36 @@ def parse_lshw(sudo: bool = False):
     """Get RAM information via lshw."""
     cmd = (['sudo'] if sudo else []) + ['lshw', '-c', 'memory', '-xml', '-quiet']
     result = subprocess.run(cmd, timeout=5, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    return ET.fromstring(result.stdout.decode()), xmltodict.parse(result.stdout.decode())
+    return ET.fromstring(result.stdout.decode())
 
 
 def query_ram_bank(node: ET.Element) -> t.Mapping[str, t.Any]:
     """Extract information about given RAM bank from XML node."""
+    ram_bank = {}
+    bank_product = node.findall('./product')
+    ram_bank['product'] = bank_product[0].text
+    bank_vendor = node.findall('./vendor')
+    ram_bank['vendor'] = bank_vendor[0].text
+    bank_serial = node.findall('./serial')
+    ram_bank['serial'] = bank_serial[0].text
+    bank_description = node.findall('./description')
+    ram_bank['description'] = bank_description[0].text
     bank_size = node.findall('./size')
     bank_clock = node.findall('./clock')
     if len(bank_size) != 1 or len(bank_clock) != 1:
-        _LOG.warning('there should be exactly one size and clock value for a bank'
-                     ' but there are %i and %i respectively', len(bank_size), len(bank_clock))
+        _LOG.warning(f'there should be exactly one size and clock value for a bank but there are'
+                     f' {len(bank_size)} and {len(bank_clock)} respectively')
     _LOG.debug(ET.tostring(node, encoding='utf8', method='xml').decode())
     assert bank_size[0].text is not None
-    ram_bank = {'memory': int(bank_size[0].text)}
+    ram_bank['memory'] = bank_size[0].text
     try:
         if bank_clock[0].text is not None:
-            ram_bank['clock'] = int(bank_clock[0].text)
+            ram_bank['clock'] = bank_clock[0].text
     except IndexError:
         pass
+
     return ram_bank
+
+
+def query_ram_cache(node: ET.Element) -> t.Mapping[str, t.Any]:
+    pass

@@ -4,4 +4,3 @@ pint
 psutil
 py-cpuinfo
 pyudev
-xmltodict
