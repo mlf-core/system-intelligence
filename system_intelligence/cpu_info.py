@@ -7,6 +7,7 @@ from rich.console import Console
 
 from .available_features import cpuinfo, pint, psutil, CPU, CPU_CLOCK, CPU_CORES
 from .util.rich_util import create_styled_table
+from .util.unit_conversion_util import hz_to_hreadable_string
 
 _LOG = logging.getLogger(__name__)
 
@@ -66,7 +67,9 @@ def query_cpu(**_) -> t.Mapping[str, t.Any]:
     cpu = cpuinfo.get_cpu_info()
     clock_current, clock_min, clock_max = query_cpu_clock()
     logical_cores, physical_cores = query_cpu_cores()
-    cache = _get_cache_sizes(cpu)
+    cache = dict(_get_cache_sizes(cpu))
+    for level, hz in cache.items():
+        cache[level] = hz_to_hreadable_string(hz)
 
     return {
         'vendor_id_raw': cpu.get('vendor_id_raw'),
@@ -75,9 +78,9 @@ def query_cpu(**_) -> t.Mapping[str, t.Any]:
         'arch': cpu.get('arch'),
         'logical_cores': str(logical_cores),
         'physical_cores': str(physical_cores),
-        'clock': str(clock_current),
-        'clock_min': str(clock_min),
-        'clock_max': str(clock_max),
+        'clock': f'{str(clock_current)} MHz',
+        'clock_min': f'{str(clock_min)} MHz',
+        'clock_max': f'{str(clock_max)} MHz',
         'cache': str(cache)}
 
 

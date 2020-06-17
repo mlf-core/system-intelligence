@@ -8,6 +8,7 @@ from .available_features import cuda, GPU
 
 from .errors import QueryError
 from .util.rich_util import create_styled_table
+from .util.unit_conversion_util import bytes_to_hreadable_string, hz_to_hreadable_string
 
 compute_capability_to_architecture = {
     2: 'Fermi',
@@ -41,9 +42,9 @@ def query_gpu(device: 'cuda.Device') -> t.Mapping[str, t.Any]:
             'architecture': compute_capability_to_architecture[compute_capability[0]],
             'brand': device.name(),
             'compute_capability': str(float('.'.join(str(_) for _ in compute_capability))),
-            'memory': str(device.total_memory()),
-            'memory_clock': str(attributes[cuda.device_attribute.MEMORY_CLOCK_RATE]),
-            'clock': str(attributes[cuda.device_attribute.CLOCK_RATE]),
+            'memory': bytes_to_hreadable_string(device.total_memory()),
+            'memory_clock': hz_to_hreadable_string(attributes[cuda.device_attribute.MEMORY_CLOCK_RATE]),
+            'clock': hz_to_hreadable_string(attributes[cuda.device_attribute.CLOCK_RATE]),
             'multiprocessors': str(multiprocessors),
             'cores': str(cuda_cores),
             'warp_size': str(attributes[cuda.device_attribute.WARP_SIZE])
