@@ -18,7 +18,7 @@ def query_ram_total() -> t.Optional[int]:
     """Get information about total available RAM."""
     if not RAM_TOTAL:
         return None
-    
+
     return psutil.virtual_memory().total
 
 
@@ -35,10 +35,12 @@ def query_ram(sudo: bool = False, **kwargs) -> t.Mapping[str, t.Any]:
     return ram
 
 
-def query_ram_banks_cache(sudo: bool = False, **_) -> t.Tuple[t.List[t.Mapping[str, t.Any]], t.List[t.Mapping[str, t.Any]]]:
+def query_ram_banks_cache(sudo: bool = False, **_) \
+        -> t.Tuple[t.List[t.Mapping[str, t.Any]], t.List[t.Mapping[str, t.Any]]]:
     """Extract information about RAM dice installed in the system."""
     if os.geteuid() != 0:
-        click.echo(click.style('Run system-intelligence with sudo to enable more verbose (bank and cache) RAM output!', fg='green'))
+        click.echo(click.style('Run system-intelligence with administrative permissions to enable more verbose'
+                               ' (bank and cache) RAM output!', fg='green'))
     if not is_process_accessible(['lshw']):
         click.echo(click.style('lshw is not installed! Unable to fetch detailed RAM information.', fg='yellow'))
     try:
