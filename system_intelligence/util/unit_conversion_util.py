@@ -6,6 +6,10 @@ def bytes_to_hreadable_string(nbytes: int) -> str:
     """
     suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
 
+    # No result
+    if not nbytes:
+        return ''
+
     if isinstance(nbytes, str):
         nbytes = int(nbytes)
     i = 0
@@ -22,6 +26,10 @@ def hz_to_hreadable_string(hz: int) -> str:
     Transforms hertz into a human readable string with attached appropriate unit
     """
     suffixes = ['Hz', 'kHz', 'MHz', 'GHz']
+
+    # No result
+    if not hz:
+        return ''
 
     if isinstance(hz, str):
         hz = int(hz)

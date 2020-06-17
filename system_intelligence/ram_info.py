@@ -89,6 +89,9 @@ def query_ram_bank(node: ET.Element) -> t.Mapping[str, t.Any]:
     ram_bank['serial'] = bank_serial[0].text
     bank_description = node.findall('./description')
     ram_bank['description'] = bank_description[0].text
+    bank_slot = node.findall('./slot')
+    ram_bank['slot'] = bank_slot[0].text
+
     bank_size = node.findall('./size')
     bank_clock = node.findall('./clock')
     if len(bank_size) != 1 or len(bank_clock) != 1:
@@ -135,20 +138,18 @@ def print_ram_info(ram_info: dict):
         table.add_column('Serial', justify='left')
         table.add_column('Vendor', justify='left')
         table.add_column('Description', justify='left')
-        table.add_column('Memory', justify='left')
+        table.add_column('Slot', justify='left')
+        table.add_column('Memory / Memory Total', justify='left')
         table.add_column('Clock ', justify='left')
-
-        table.add_column('Total Memory (Byte)', justify='right')
 
         for bank in ram_info['banks']:
             table.add_row(bank['product'],
                           bank['serial'],
                           bank['vendor'],
                           bank['description'],
-                          bytes_to_hreadable_string(bank['memory']),
-                          hz_to_hreadable_string(bank['clock']),
-                          bytes_to_hreadable_string(ram_info['total']))
-
+                          bank['slot'],
+                          f'{bytes_to_hreadable_string(bank["memory"])} / {bytes_to_hreadable_string(ram_info["total"])}',
+                          hz_to_hreadable_string(bank['clock']))
         console.print(table)
 
         table = create_styled_table('Random-Access Memory Cache')
