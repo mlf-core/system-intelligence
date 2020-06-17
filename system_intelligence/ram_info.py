@@ -18,35 +18,39 @@ def query_ram_total() -> t.Optional[int]:
     """Get information about total available RAM."""
     if not RAM_TOTAL:
         return None
+    
     return psutil.virtual_memory().total
 
 
 def query_ram(sudo: bool = False, **kwargs) -> t.Mapping[str, t.Any]:
     """Get all available information about RAM."""
     total_ram = query_ram_total()
-    ram_banks = query_ram_banks(sudo=sudo, **kwargs)
+    ram_banks, ram_cache = query_ram_banks_cache(sudo=sudo, **kwargs)
     ram: t.Dict[str, t.Any] = {'total': total_ram}
     if ram_banks:
         ram['banks'] = ram_banks
+    if ram_cache:
+        ram['cache'] = ram_cache
+
     return ram
 
 
-def query_ram_banks(sudo: bool = False, **_) -> t.List[t.Mapping[str, t.Any]]:
+def query_ram_banks_cache(sudo: bool = False, **_) -> t.Tuple[t.List[t.Mapping[str, t.Any]], t.List[t.Mapping[str, t.Any]]]:
     """Extract information about RAM dice installed in the system."""
     if os.geteuid() != 0:
-        click.echo(click.style('Run system-intelligence with sudo to enable more verbose RAM output', fg='green'))
+        click.echo(click.style('Run system-intelligence with sudo to enable more verbose (bank and cache) RAM output!', fg='green'))
     if not is_process_accessible(['lshw']):
         click.echo(click.style('lshw is not installed! Unable to fetch detailed RAM information.', fg='yellow'))
     try:
         xml_root = parse_lshw(sudo=sudo)
     except subprocess.TimeoutExpired:
-        return []
+        return [], []
     except subprocess.CalledProcessError:
-        return []
+        return [], []
     except FileNotFoundError:
-        return []
+        return [], []
     except ET.ParseError:
-        return []
+        return [], []
     nodes = xml_root.findall('.//node')
     _LOG.debug(f'{len(nodes)} nodes')
     ram_banks = []
@@ -58,7 +62,8 @@ def query_ram_banks(sudo: bool = False, **_) -> t.List[t.Mapping[str, t.Any]]:
             ram_banks.append(query_ram_bank(node))
         elif node_id.startswith('cache'):
             ram_cache.append(query_ram_cache(node))
-    return ram_banks
+
+    return ram_banks, ram_cache
 
 
 def parse_lshw(sudo: bool = False):
@@ -97,4 +102,14 @@ def query_ram_bank(node: ET.Element) -> t.Mapping[str, t.Any]:
 
 
 def query_ram_cache(node: ET.Element) -> t.Mapping[str, t.Any]:
-    pass
+    ram_cache = {}
+    cache_slot = node.findall('./slot')
+    ram_cache['slot'] = cache_slot[0].text
+    cache_physid = node.findall('./physid')
+    ram_cache['physid'] = cache_physid[0].text
+    cache_size = node.findall('./size')
+    ram_cache['size'] = cache_size[0].text
+    cache_capacity = node.findall('./capacity')
+    ram_cache['capacity'] = cache_capacity[0].text
+
+    return ram_cache
