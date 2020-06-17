@@ -148,7 +148,8 @@ def print_ram_info(ram_info: dict):
                           bank['vendor'],
                           bank['description'],
                           bank['slot'],
-                          f'{bytes_to_hreadable_string(bank["memory"])} / {bytes_to_hreadable_string(ram_info["total"])}',
+                          f'{bytes_to_hreadable_string(bank["memory"])} /'
+                          f' {bytes_to_hreadable_string(ram_info["total"])}',
                           hz_to_hreadable_string(bank['clock']))
         console.print(table)
 
