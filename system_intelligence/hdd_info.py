@@ -1,17 +1,27 @@
 """Functions to query system's hard drives."""
 
 import itertools
-# import logging
+import os
 import typing as t
 
-from .available_features import pyudev, HDD
+import psutil
+from rich.console import Console
 
-# _LOG = logging.getLogger(__name__)
+from .available_features import pyudev, HDD
+from .util.rich_util import create_styled_table
+from .util.unit_conversion_util import bytes_to_hreadable_string
 
 IGNORED_DEVICE_PATHS = {'/dm', '/loop', '/md'}
 
 
-def query_hdd() -> t.Dict[str, dict]:
+def query_hdd():
+    hdd_models = query_hdd_model()
+    hdd_usage = query_hdd_usage()
+
+    return {'model': hdd_models, 'usage': hdd_usage}
+
+
+def query_hdd_model() -> t.Dict[str, dict]:
     """Get information about all hard drives."""
     if not HDD:
         return {}
@@ -28,4 +38,60 @@ def query_hdd() -> t.Dict[str, dict]:
             except KeyError:
                 pass
         hdds[device.device_node] = hdd
+
     return hdds
+
+
+def query_hdd_usage() -> t.Dict[t.Any, t.List[t.Union[str, t.Any]]]:
+    hdd_to_usage = {}
+    for part in psutil.disk_partitions(all=False):
+        if os.name == 'nt':
+            # skip cd-rom drives with no disk in it; they may raise ENOENT,
+            # pop-up a Windows GUI error for a non-ready partition or just hang.
+            if 'cdrom' in part.opts or part.fstype == '':
+                continue
+        usage = psutil.disk_usage(part.mountpoint)
+        hdd_to_usage[part.device] = {'total': bytes_to_hreadable_string(usage.total),
+                                     'used': bytes_to_hreadable_string(usage.used),
+                                     'free': bytes_to_hreadable_string(usage.free),
+                                     'percentage': str(usage.percent),
+                                     'fstype': part.fstype,
+                                     'mountpoint': part.mountpoint}
+
+    return hdd_to_usage
+
+
+def print_hdd_info(hdd_info: dict) -> None:
+    # Models
+    table = create_styled_table('Hard Disks Drives')
+
+    table.add_column('Disk Name', justify='left')
+    table.add_column('Model', justify='left')
+
+    for hdd, details in hdd_info['model'].items():
+        table.add_row(hdd, details['model'], bytes_to_hreadable_string(details['size']))
+
+    console = Console()
+    console.print(table)
+
+    # Usage
+    table = create_styled_table('Disk Usage')
+
+    table.add_column('Device', justify='left')
+    table.add_column('Total', justify='left')
+    table.add_column('Used', justify='left')
+    table.add_column('Free', justify='left')
+    table.add_column('Use %', justify='left')
+    table.add_column('Type', justify='left')
+    table.add_column('Mount', justify='left')
+
+    for device, usage in hdd_info['usage'].items():
+        table.add_row(device,
+                      usage['total'],
+                      usage['used'],
+                      usage['free'],
+                      usage['percentage'],
+                      usage['fstype'],
+                      usage['mountpoint'])
+
+    console.print(table)

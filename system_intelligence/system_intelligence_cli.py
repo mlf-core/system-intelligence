@@ -10,7 +10,9 @@ WD = os.path.dirname(__file__)
 
 
 @click.command()
-@click.argument('scope', type=click.Choice(['all', 'cpu', 'gpu', 'ram', 'software']), default='all')
+@click.argument('scope',
+                type=click.Choice(['all', 'cpu', 'gpu', 'ram', 'software', 'host', 'os', 'hdd']),
+                default='all')
 @click.option('--format', type=click.Choice(['raw', 'json']), default='raw',
               help='output format')
 @click.option('--target', type=str, default='stdout',
@@ -19,7 +21,8 @@ def main(scope, format, target):
     """
     Query your system for hardware and software related information.
 
-    Currently supported arguments are 'all', 'cpu', 'gpu', 'ram'.
+    Currently supported arguments are
+    'all', 'cpu', 'gpu', 'ram', 'software', 'host', 'os', 'hdd'
     """
     click.echo(click.style(r"""
                    _                       _       _       _ _ _

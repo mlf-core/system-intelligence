@@ -9,6 +9,9 @@ import typing as t
 from .all_info import query_all
 from .cpu_info import query_cpu, print_cpu_info
 from .gpu_info import query_gpus, print_gpu_info
+from .hdd_info import print_hdd_info, query_hdd
+from .host_info import query_host, print_host_info
+from .os_info import query_os, print_os_info
 from .ram_info import query_ram, print_ram_info
 from .software_info import query_software, print_software_info
 
@@ -47,6 +50,15 @@ def query(query_scope: str, **kwargs) -> t.Any:
     elif query_scope == 'software':
         info = query_software()
         print_software_info(info)
+    elif query_scope == 'host':
+        info = query_host()
+        print_host_info(info)
+    elif query_scope == 'os':
+        info = query_os()
+        print_os_info(info)
+    elif query_scope == 'hdd':
+        info = query_hdd()
+        print_hdd_info(info)
     else:
         raise NotImplementedError(f'scope={query_scope}')
     return info
