@@ -11,14 +11,6 @@ _LOG = logging.getLogger(__name__)
 
 class Tests(unittest.TestCase):
 
-    def test_unsupported_scope(self):
-        with self.assertRaises(NotImplementedError):
-            query_and_export('host', 'raw', sys.stdout)
-        with self.assertRaises(NotImplementedError):
-            query_and_export('os', 'raw', sys.stdout)
-        with self.assertRaises(NotImplementedError):
-            query_and_export('swap', 'raw', sys.stdout)
-
     def test_unsupported_format(self):
         with self.assertRaises(NotImplementedError):
             query_and_export('all', 'xml', sys.stdout)

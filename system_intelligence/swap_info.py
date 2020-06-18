@@ -2,6 +2,8 @@
 
 import typing as t
 
+import click
+
 from .available_features import psutil, SWAP
 
 
@@ -10,4 +12,9 @@ def query_swap() -> t.Optional[int]:
     if not SWAP:
         return None
     total_swap = psutil.swap_memory().total
+
     return total_swap
+
+
+def print_swap_info(swap: int) -> None:
+    click.echo(click.style(f'Swap size: {str(swap)}', fg='red'))
