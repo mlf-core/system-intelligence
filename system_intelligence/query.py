@@ -1,7 +1,6 @@
 """Query and export system data in one step."""
 
 import json
-import sys
 import typing as t
 
 from ruamel.yaml import YAML

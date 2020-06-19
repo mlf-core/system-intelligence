@@ -29,10 +29,11 @@ def print_network_info(network_info):
     table.add_column('mtu', justify='left')
 
     for network, snicstats in network_info.items():
-        table.add_row(network, snicstats['isup'],
-                               snicstats['duplex'],
-                               snicstats['speed'],
-                               snicstats['mtu'])
+        table.add_row(network,
+                      snicstats['isup'],
+                      snicstats['duplex'],
+                      snicstats['speed'],
+                      snicstats['mtu'])
 
     console = Console()
     console.print(table)
