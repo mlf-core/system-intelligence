@@ -6,10 +6,17 @@ from rich.console import Console
 from system_intelligence.util.rich_util import create_styled_table
 
 
-def query_network() -> t.Optional[int]:
+def query_network() -> t.Dict[t.Any, t.Dict[str, str]]:
     """Get information about swap."""
+    stats = psutil.net_if_stats()
+    final_repr = {}
+    for device, snicstats in stats.items():
+        final_repr[device] = {'isup': str(snicstats.isup),
+                              'duplex': str(snicstats.duplex),
+                              'speed': str(snicstats.speed),
+                              'mtu': str(snicstats.mtu)}
 
-    return psutil.net_if_stats()
+    return final_repr
 
 
 def print_network_info(network_info):
@@ -22,7 +29,10 @@ def print_network_info(network_info):
     table.add_column('mtu', justify='left')
 
     for network, snicstats in network_info.items():
-        table.add_row(network, str(snicstats.isup), str(snicstats.duplex), str(snicstats.speed), str(snicstats.mtu))
+        table.add_row(network, snicstats['isup'],
+                               snicstats['duplex'],
+                               snicstats['speed'],
+                               snicstats['mtu'])
 
     console = Console()
     console.print(table)

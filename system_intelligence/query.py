@@ -1,7 +1,10 @@
 """Query and export system data in one step."""
 
 import json
+import sys
 import typing as t
+
+from ruamel.yaml import YAML
 
 from .all_info import query_all
 from .cpu_info import query_cpu, print_cpu_info  # noqa F401
@@ -29,7 +32,8 @@ def query_and_export(query_scope: str, verbose: bool, export_format: str, export
     - export_target: sys.stdout, sys.stderr, path.
     """
     info = query(query_scope, verbose, **kwargs)
-    export(info, export_format, export_target)
+    if export_target:
+        export(info, export_format, export_target)
 
 
 def query(query_scope: str, verbose: bool, **kwargs) -> t.Any:
@@ -57,7 +61,8 @@ def export(info, export_format: str, export_target: t.Any):
     elif export_format == 'raw':
         with open(str(export_target), 'a', encoding='utf-8') as text_file:
             text_file.write(str(info))
-    # elif export_format == 'yml':
-
+    elif export_format == 'yml':
+        yaml = YAML(typ='safe')
+        yaml.dump(info, export_target)
     else:
         raise NotImplementedError(f'format={export_format} target={export_target}')
