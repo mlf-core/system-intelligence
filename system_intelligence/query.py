@@ -57,5 +57,7 @@ def export(info, export_format: str, export_target: t.Any):
     elif export_format == 'raw':
         with open(str(export_target), 'a', encoding='utf-8') as text_file:
             text_file.write(str(info))
+    # elif export_format == 'yml':
+
     else:
         raise NotImplementedError(f'format={export_format} target={export_target}')
