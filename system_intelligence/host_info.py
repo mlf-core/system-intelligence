@@ -13,4 +13,4 @@ def query_host() -> str:
 
 
 def print_host_info(hostname):
-    click.echo(click.style(hostname, fg='red'))
+    click.echo(click.style(f'Hostname: {hostname}', fg='red'))

@@ -5,7 +5,7 @@ import click
 
 def is_process_accessible(shell_command: list) -> bool:
     """
-    Verifies that git is accessible and in the PATH.
+    Verifies that a shell command is accessible and in the PATH.
     :return: True if accessible, false if not
     """
     try:

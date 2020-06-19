@@ -75,7 +75,7 @@ def calculate_cuda_cores(compute_capability: t.Tuple[int, int], multiprocessors:
     return None
 
 
-def print_gpu_info(gpus_info: list):
+def print_gpus_info(gpus_info: list):
     table = create_styled_table('Graphical Processing Unit')
 
     table.add_column('Architecture', justify='left')

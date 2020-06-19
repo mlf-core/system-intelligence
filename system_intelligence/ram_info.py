@@ -128,7 +128,7 @@ def print_ram_info(ram_info: dict):
         table = create_styled_table('Random-access Memory')
 
         table.add_column('Total Memory')
-        table.add_row(ram_info['total'])
+        table.add_row(f'{bytes_to_hreadable_string(ram_info["total"])}')
 
         console.print(table)
     else:
@@ -149,7 +149,7 @@ def print_ram_info(ram_info: dict):
                           bank['description'],
                           bank['slot'],
                           f'{bytes_to_hreadable_string(bank["memory"])} /'
-                          f' {bytes_to_hreadable_string(ram_info["total"])}',
+                          f'{bytes_to_hreadable_string(ram_info["total"])}',
                           hz_to_hreadable_string(bank['clock']))
         console.print(table)
 

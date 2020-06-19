@@ -51,7 +51,7 @@ def _get_cache_size(level: int, cpuinfo_data: dict) -> t.Optional[int]:
     value = ureg(raw_value)
     if isinstance(value, int):
         return value * 1024
-    _LOG.debug('L%i cache size parsed by pint: "%s" -> %s', level, raw_value, value)
+    _LOG.debug(f'L{level} cache size parsed by pint: {raw_value} -> {value}')
     value = value.to('bytes')
     return int(value.magnitude)
 

@@ -1,30 +1,25 @@
 """Query and export system data in one step."""
 
 import json
-import pathlib
-import pprint
-import sys
 import typing as t
 
-import psutil
-
 from .all_info import query_all
-from .cpu_info import query_cpu, print_cpu_info
-from .gpu_info import query_gpus, print_gpu_info
-from .hdd_info import print_hdd_info, query_hdd
-from .host_info import query_host, print_host_info
-from .network_info import print_network_info
-from .os_info import query_os, print_os_info
-from .ram_info import query_ram, print_ram_info
-from .software_info import query_software, print_software_info
-from .swap_info import query_swap, print_swap_info
+from .cpu_info import query_cpu, print_cpu_info  # noqa F401
+from .gpu_info import query_gpus, print_gpus_info  # noqa F401
+from .hdd_info import print_hdd_info, query_hdd  # noqa F401
+from .host_info import query_host, print_host_info  # noqa F401
+from .network_info import query_network, print_network_info  # noqa F401
+from .os_info import query_os, print_os_info  # noqa F401
+from .ram_info import query_ram, print_ram_info  # noqa F401
+from .software_info import query_software, print_software_info  # noqa F401
+from .swap_info import query_swap, print_swap_info  # noqa F401
 
 JSON_INDENT = 2
 
 JSON_ENSURE_ASCII = False
 
 
-def query_and_export(query_scope: str, export_format: str, export_target: t.Any, **kwargs):
+def query_and_export(query_scope: str, verbose: bool, export_format: str, export_target: t.Any, **kwargs):
     """Query the given scope of the system and export results in a given format to a given target.
 
     Currently implemented values are:
@@ -33,65 +28,34 @@ def query_and_export(query_scope: str, export_format: str, export_target: t.Any,
     - export_format: json, raw.
     - export_target: sys.stdout, sys.stderr, path.
     """
-    info = query(query_scope, **kwargs)
+    info = query(query_scope, verbose, **kwargs)
     export(info, export_format, export_target)
 
 
-def query(query_scope: str, **kwargs) -> t.Any:
+def query(query_scope: str, verbose: bool, **kwargs) -> t.Any:
     """Wrap around selected system query functions."""
     info: t.Any
     if query_scope == 'all':
+        for scope in ['cpu', 'gpus', 'ram', 'software', 'host', 'os', 'hdd', 'swap', 'network']:
+            query(scope, verbose)
         info = query_all(**kwargs)
-    elif query_scope == 'cpu':
-        info = query_cpu(**kwargs)
-        print_cpu_info(info)
-    elif query_scope == 'gpu':
-        info = query_gpus(**kwargs)
-        print_gpu_info(info)
-    elif query_scope == 'ram':
-        info = query_ram(**kwargs)
-        print_ram_info(info)
-    elif query_scope == 'software':
-        info = query_software()
-        print_software_info(info)
-    elif query_scope == 'host':
-        info = query_host()
-        print_host_info(info)
-    elif query_scope == 'os':
-        info = query_os()
-        print_os_info(info)
-    elif query_scope == 'hdd':
-        info = query_hdd()
-        print_hdd_info(info)
-    elif query_scope == 'swap':
-        info = query_swap()
-        print_swap_info(info)
-    elif query_scope == 'network':
-        info = psutil.net_if_stats()
-        print_network_info(info)
     else:
-        raise NotImplementedError(f'scope={query_scope}')
+        # Build the function name to call using the scope and call it by name.
+        get_info = f'query_{query_scope}'
+        info = globals()[get_info]()
+        print_info = f'print_{query_scope}_info'
+        globals()[print_info](info)
+
     return info
 
 
 def export(info, export_format: str, export_target: t.Any):
     """Export information obtained by system query to a specified format."""
     if export_format == 'json':
-        if export_target in (sys.stdout, sys.stderr):
-            json_str = json.dumps(info, indent=JSON_INDENT, ensure_ascii=JSON_ENSURE_ASCII)
-            print(json_str, file=export_target)
-        elif isinstance(export_target, pathlib.Path):
-            with open(str(export_target), 'w', encoding='utf-8') as json_file:
-                json.dump(info, json_file, indent=JSON_INDENT, ensure_ascii=JSON_ENSURE_ASCII)
-        else:
-            raise NotImplementedError('format={} target={}'.format(export_format, export_target))
+        with open(str(export_target), 'w', encoding='utf-8') as json_file:
+            json.dump(info, json_file, indent=JSON_INDENT, ensure_ascii=JSON_ENSURE_ASCII)
     elif export_format == 'raw':
-        if export_target in (sys.stdout, sys.stderr):
-            pprint.pprint(info, stream=export_target)
-        elif isinstance(export_target, pathlib.Path):
-            with open(str(export_target), 'a', encoding='utf-8') as text_file:
-                text_file.write(str(info))
-        else:
-            raise NotImplementedError('format={} target={}'.format(export_format, export_target))
+        with open(str(export_target), 'a', encoding='utf-8') as text_file:
+            text_file.write(str(info))
     else:
-        raise NotImplementedError('format={} target={}'.format(export_format, export_target))
+        raise NotImplementedError(f'format={export_format} target={export_target}')

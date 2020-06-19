@@ -42,7 +42,7 @@ def query_hdd_model() -> t.Dict[str, dict]:
     return hdds
 
 
-def query_hdd_usage() -> t.Dict[t.Any, t.List[t.Union[str, t.Any]]]:
+def query_hdd_usage() -> t.Dict[t.Any, t.Dict[str, str]]:
     hdd_to_usage = {}
     for part in psutil.disk_partitions(all=False):
         if os.name == 'nt':

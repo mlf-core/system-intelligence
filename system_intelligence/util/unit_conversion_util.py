@@ -3,6 +3,9 @@
 def bytes_to_hreadable_string(nbytes: int) -> str:
     """
     Transforms bytes into a human readable string with attached appropriate unit
+
+    :param nbytes: number of bytes
+    :return: human readable formatted string of bytes with unit
     """
     suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
 
@@ -24,6 +27,9 @@ def bytes_to_hreadable_string(nbytes: int) -> str:
 def hz_to_hreadable_string(hz: int) -> str:
     """
     Transforms hertz into a human readable string with attached appropriate unit
+
+    :param: number of hertz
+    :return: human readable formatted string of hertz with unit
     """
     suffixes = ['Hz', 'kHz', 'MHz', 'GHz']
 

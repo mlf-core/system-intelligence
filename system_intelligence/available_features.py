@@ -1,6 +1,8 @@
-"""Probe the system for available features to estalbish what can be queried."""
+"""Probe the system for available features to determine what can be queried."""
 
 import logging
+
+import click
 
 _LOG = logging.getLogger(__name__)
 
@@ -8,17 +10,17 @@ try:
     import cpuinfo
 except ImportError:
     cpuinfo = None
-    _LOG.info("unable to import package cpuinfo", exc_info=True)
+    click.echo(click.style('Unable to import package cpuinfo. CPU information may be limited.', fg='yellow'))
 except Exception:  # noqa E722
     # raise Exception("py-cpuinfo currently only works on X86 and some ARM CPUs.")
     cpuinfo = None  # pylint: disable = invalid-name
-    _LOG.info("package cpuinfo doesn't work on this system", exc_info=True)
+    click.echo(click.style('Package cpuinfo does not support this system!', fg='red'))
 
 try:
     import pint
 except ImportError:
     pint = None
-    _LOG.info("unable to import package pint", exc_info=True)
+    click.echo(click.style('Unable to import package pint. CPU information may be limited.', fg='yellow'))
 
 CPU = cpuinfo is not None and pint is not None
 
@@ -26,7 +28,7 @@ try:
     import psutil
 except ImportError:
     psutil = None
-    _LOG.info("unable to import package psutil", exc_info=True)
+    click.echo(click.style('Unable to import package psutil. CPU and Network information may be limited.', fg='yellow'))
 
 CPU_CLOCK = psutil is not None
 CPU_CORES = psutil is not None
@@ -39,10 +41,10 @@ try:
     _LOG.debug('using CUDA version %s', '.'.join(str(_) for _ in cuda.get_version()))
 except ImportError:
     cuda = None
-    _LOG.info("unable to import package pycuda", exc_info=True)
+    click.echo(click.style('Unable to import package pycuda. GPU information may be limited.', fg='yellow'))
 except pycuda._driver.Error:  # pylint: disable = protected-access
     cuda = None  # pylint: disable = invalid-name
-    _LOG.info("unable to initialize cuda", exc_info=True)
+    click.echo(click.style('Unable to initialize CUDA. CPU information may be limited.', fg='yellow'))
 
 GPU = cuda is not None
 
@@ -52,10 +54,8 @@ try:
     pyudev.Context()
 except ImportError:
     pyudev = None
-    _LOG.info("unable to import package pyudev", exc_info=True)
+    click.echo(click.style('Unable to import package pyudev. HDD information may be limited.', fg='yellow'))
 
 HDD = pyudev is not None
-
 RAM_TOTAL = psutil is not None
-
 SWAP = psutil is not None

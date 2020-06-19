@@ -4,6 +4,7 @@ import pathlib
 import sys
 import click
 
+from rich.traceback import install
 from system_intelligence.query import query_and_export
 
 WD = os.path.dirname(__file__)
@@ -11,18 +12,19 @@ WD = os.path.dirname(__file__)
 
 @click.command()
 @click.argument('scope',
-                type=click.Choice(['all', 'cpu', 'gpu', 'ram', 'software', 'host', 'os', 'hdd', 'swap', 'network']),
-                default='all')
+                type=click.Choice(['all', 'cpu', 'gpus', 'ram', 'software', 'host', 'os', 'hdd', 'swap', 'network']),
+                nargs=-1)
+@click.option('--verbose/--silent', default=False)
 @click.option('--format', type=click.Choice(['raw', 'json']), default='raw',
               help='output format')
-@click.option('--target', type=str, default='stdout',
-              help='Output file path. if \'stdout\' output is printed to the console.')
-def main(scope, format, target):
+@click.option('--target', type=str,
+              help='Output file path.')
+def main(scope, verbose, format, target):
     """
     Query your system for hardware and software related information.
 
     Currently supported arguments are
-    'all', 'cpu', 'gpu', 'ram', 'software', 'host', 'os', 'hdd', 'swap', 'network'
+    'all', 'cpu', 'gpus', 'ram', 'software', 'host', 'os', 'hdd', 'swap', 'network'
     """
     click.echo(click.style(r"""
                    _                       _       _       _ _ _
@@ -32,12 +34,18 @@ def main(scope, format, target):
     |___/\__, |___/\__\___|_| |_| |_|     |_|_| |_|\__\___|_|_|_|\__, |\___|_| |_|\___\___|
           |___/                                                   |___/
     """, fg='red'))
-    target = {
-        'stdout': sys.stdout,
-        'stderr': sys.stderr
-    }.get(target, pathlib.Path(target))
-    query_and_export(query_scope=scope, export_format=format, export_target=target)
+
+    if not scope:
+        click.echo(click.style('Please choose a scope! Run ', fg='red')
+                   + click.style('system-intelligence scope --help ', fg='green')
+                   + click.style('for more information.', fg='red'))
+        sys.exit(1)
+    if target:
+        target = pathlib.Path(target)
+    for query in scope:
+        query_and_export(query_scope=query, verbose=verbose, export_format=format, export_target=target)
 
 
 if __name__ == "__main__":
+    install()
     sys.exit(main())  # pragma: no cover
