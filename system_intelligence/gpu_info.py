@@ -21,7 +21,7 @@ compute_capability_to_architecture = {
 try:
     import pycuda
     import pycuda.driver as cuda
-    import pycuda.autoinit
+    import pycuda.autoinit  # noqa F401
     is_cuda_available = True
 except ModuleNotFoundError:
     is_cuda_available = False
@@ -32,7 +32,7 @@ def query_gpus(**_) -> t.List[t.Mapping[str, t.Any]]:
     if not is_cuda_available:
         click.echo(click.style('Unable to import package pycuda. GPU information may be limited.', fg='yellow'))
         return []
-    
+
     gpus = []
     for i in range(cuda.Device.count()):
         device = cuda.Device(i)
