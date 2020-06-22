@@ -3,8 +3,17 @@
 import typing as t
 
 import click
+import psutil
 
-from .available_features import psutil, SWAP
+try:
+    import pyudev
+
+    pyudev.Context()
+except ImportError:
+    pyudev = None
+    click.echo(click.style('Unable to import package pyudev. HDD information may be limited.', fg='yellow'))
+
+SWAP = psutil is not None
 
 
 def query_swap() -> t.Optional[int]:

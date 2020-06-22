@@ -3,13 +3,40 @@
 import logging
 import typing as t
 
+import click
 from rich.console import Console
 
-from .available_features import cpuinfo, pint, psutil, CPU, CPU_CLOCK, CPU_CORES
 from .util.rich_util import create_styled_table
 from .util.unit_conversion_util import hz_to_hreadable_string
 
 _LOG = logging.getLogger(__name__)
+
+try:
+    import cpuinfo
+except ImportError:
+    cpuinfo = None
+    click.echo(click.style('Unable to import package cpuinfo. CPU information may be limited.', fg='yellow'))
+except Exception:  # noqa E722
+    # raise Exception("py-cpuinfo currently only works on X86 and some ARM CPUs.")
+    cpuinfo = None  # pylint: disable = invalid-name
+    click.echo(click.style('Package cpuinfo does not support this system!', fg='red'))
+
+try:
+    import pint
+except ImportError:
+    pint = None
+    click.echo(click.style('Unable to import package pint. CPU information may be limited.', fg='yellow'))
+
+CPU = cpuinfo is not None and pint is not None
+
+try:
+    import psutil
+except ImportError:
+    psutil = None
+    click.echo(click.style('Unable to import package psutil. CPU and Network information may be limited.', fg='yellow'))
+
+CPU_CLOCK = psutil is not None
+CPU_CORES = psutil is not None
 
 
 def query_cpu_clock() -> t.Tuple[t.Optional[int], t.Optional[int], t.Optional[int]]:

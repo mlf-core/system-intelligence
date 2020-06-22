@@ -2,9 +2,8 @@
 
 import typing as t
 
+import click
 from rich.console import Console
-
-from .available_features import cuda, GPU
 
 from .errors import QueryError
 from .util.rich_util import create_styled_table
@@ -19,9 +18,23 @@ compute_capability_to_architecture = {
     8: 'Ampere'
 }
 
+try:
+    import pycuda
+    import pycuda.driver as cuda
+    import pycuda.autoinit
+
+except ImportError:
+    cuda = None
+    click.echo(click.style('Unable to import package pycuda. GPU information may be limited.', fg='yellow'))
+except pycuda._driver.Error:  # pylint: disable = protected-access
+    cuda = None  # pylint: disable = invalid-name
+    click.echo(click.style('Unable to initialize CUDA. CPU information may be limited.', fg='yellow'))
+
 
 def query_gpus(**_) -> t.List[t.Mapping[str, t.Any]]:
     """Get information about all GPUs."""
+    GPU = cuda is not None
+
     if not GPU:
         return []
     gpus = []

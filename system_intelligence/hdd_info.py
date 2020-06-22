@@ -4,14 +4,24 @@ import itertools
 import os
 import typing as t
 
+import click
 import psutil
 from rich.console import Console
 
-from .available_features import pyudev, HDD
 from .util.rich_util import create_styled_table
 from .util.unit_conversion_util import bytes_to_hreadable_string
 
 IGNORED_DEVICE_PATHS = {'/dm', '/loop', '/md'}
+
+try:
+    import pyudev
+
+    pyudev.Context()
+except ImportError:
+    pyudev = None
+    click.echo(click.style('Unable to import package pyudev. HDD information may be limited.', fg='yellow'))
+
+HDD = pyudev is not None
 
 
 def query_hdd():

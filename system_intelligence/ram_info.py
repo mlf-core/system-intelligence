@@ -7,14 +7,24 @@ import typing as t
 from xml.etree import ElementTree as ET
 
 import click
+import psutil
 from rich.console import Console
 
-from .available_features import psutil, RAM_TOTAL
 from .util.process_util import is_process_accessible
 from .util.rich_util import create_styled_table
 from .util.unit_conversion_util import bytes_to_hreadable_string, hz_to_hreadable_string
 
 _LOG = logging.getLogger(__name__)
+
+try:
+    import pyudev
+
+    pyudev.Context()
+except ImportError:
+    pyudev = None
+    click.echo(click.style('Unable to import package pyudev. HDD information may be limited.', fg='yellow'))
+
+RAM_TOTAL = psutil is not None
 
 
 def query_ram_total() -> t.Optional[int]:

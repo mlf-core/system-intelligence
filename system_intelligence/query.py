@@ -37,7 +37,7 @@ def query(query_scope: list, verbose: bool, **kwargs) -> t.Any:
             'network': {},
             'software': {}}
     if query_scope == ['all']:
-        query_scope = ['cpu', 'gpus', 'ram', 'software', 'host', 'os', 'hdd', 'swap', 'network']
+        query_scope = ['host', 'os', 'network', 'cpu', 'gpus', 'ram', 'hdd', 'swap', 'software']
 
     for query in query_scope:
         get_info = f'query_{query}'
