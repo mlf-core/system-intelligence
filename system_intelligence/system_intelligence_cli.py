@@ -10,7 +10,7 @@ from system_intelligence.query import query_and_export
 @click.argument('scope',
                 type=click.Choice(['all', 'cpu', 'gpus', 'ram', 'software', 'host', 'os', 'hdd', 'swap', 'network']),
                 nargs=-1)
-@click.option('--verbose/--silent', default=False)
+@click.option('--verbose/--silent', default=True)
 @click.option('-f', '--output_format', type=click.Choice(['raw', 'json', 'yml']), default='raw',
               help='output format')
 @click.option('-o', '--output', type=str,

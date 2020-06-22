@@ -6,7 +6,6 @@ import typing as t
 
 from ruamel.yaml import YAML
 
-from .all_info import query_all
 from .cpu_info import query_cpu, print_cpu_info  # noqa F401
 from .gpu_info import query_gpus, print_gpus_info  # noqa F401
 from .hdd_info import print_hdd_info, query_hdd  # noqa F401
@@ -28,7 +27,15 @@ def query_and_export(query_scope: list, verbose: bool, export_format: str, outpu
 
 def query(query_scope: list, verbose: bool, **kwargs) -> t.Any:
     """Wrap around selected system query functions."""
-    info = {'cpu': {}, 'gpus': {}, 'ram': {}, 'host': {}, 'os': {}, 'hdd': {}, 'swap': {}, 'network': {}, 'software': {}}
+    info = {'cpu': {},
+            'gpus': {},
+            'ram': {},
+            'host': {},
+            'os': {},
+            'hdd': {},
+            'swap': {},
+            'network': {},
+            'software': {}}
     if query_scope == ['all']:
         query_scope = ['cpu', 'gpus', 'ram', 'software', 'host', 'os', 'hdd', 'swap', 'network']
 
@@ -36,8 +43,9 @@ def query(query_scope: list, verbose: bool, **kwargs) -> t.Any:
         get_info = f'query_{query}'
         query_info = globals()[get_info]()
         info[query] = query_info
-        print_info = f'print_{query}_info'
-        globals()[print_info](query_info)
+        if verbose:
+            print_info = f'print_{query}_info'
+            globals()[print_info](query_info)
 
     return info
 
