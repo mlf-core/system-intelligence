@@ -1,13 +1,9 @@
 """Console script for system_intelligence."""
-import os
-import pathlib
 import sys
 import click
 
 from rich.traceback import install
 from system_intelligence.query import query_and_export
-
-WD = os.path.dirname(__file__)
 
 
 @click.command()
@@ -19,7 +15,7 @@ WD = os.path.dirname(__file__)
               help='output format')
 @click.option('-o', '--output', type=str,
               help='Output file path.')
-def main(scope, verbose, format, output):
+def main(scope, verbose, output_format, output):
     """
     Query your system for hardware and software related information.
 
@@ -42,9 +38,9 @@ def main(scope, verbose, format, output):
         sys.exit(1)
 
     for query in scope:
-        query_and_export(query_scope=query, verbose=verbose, export_format=format, output=output)
+        query_and_export(query_scope=query, verbose=verbose, export_format=output_format, output=output)
 
 
 if __name__ == "__main__":
-    install()
+    install()  # Install rich traceback
     sys.exit(main())  # pragma: no cover
