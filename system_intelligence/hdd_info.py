@@ -69,7 +69,8 @@ def print_hdd_info(hdd_info: dict) -> None:
     table.add_column('Model', justify='left')
 
     for hdd, details in hdd_info['model'].items():
-        table.add_row(hdd, details['model'], bytes_to_hreadable_string(details['size']))
+        model_details = details['model'] if details['model'] is not None else ''
+        table.add_row(hdd, model_details, bytes_to_hreadable_string(details['size']))
 
     console = Console()
     console.print(table)
