@@ -32,7 +32,8 @@ def main(scope, verbose, output_format, output):
     """, fg='blue'))
 
     if not verbose and not output:
-        click.echo(click.style('Please specify an output path or run system-intelligence without the silent option!', fg='yellow'))
+        click.echo(click.style('Please specify an output path or run'
+                               ' system-intelligence without the silent option!', fg='yellow'))
         sys.exit(1)
 
     if not scope:
