@@ -29,7 +29,7 @@ def query_ram(sudo: bool = False, **kwargs) -> t.Mapping[str, t.Any]:
     """Get all available information about RAM."""
     total_ram = query_ram_total()
     ram_banks, ram_cache = query_ram_banks_cache(sudo=sudo, **kwargs)
-    ram: t.Dict[str, t.Any] = {'total': total_ram}
+    ram: t.Dict[str, t.Any] = {'total': total_ram, 'banks': {}, 'cache': {}}
     if ram_banks:
         ram['banks'] = ram_banks
     if ram_cache:
@@ -58,15 +58,22 @@ def query_ram_banks_cache(sudo: bool = False, **_) \
         return [], []
     nodes = xml_root.findall('.//node')
     _LOG.debug(f'{len(nodes)} nodes')
+    
     ram_banks = []
     ram_cache = []
+    RAM_accessible = True
     for node in nodes:
         node_id = node.attrib['id']
         _LOG.debug(f'{node_id}')
         if node_id.startswith('bank'):
-            ram_banks.append(query_ram_bank(node))
+            bank_res = query_ram_bank(node)
+            ram_banks.append(bank_res[0])
+            RAM_accessible = bank_res[1]
         elif node_id.startswith('cache'):
             ram_cache.append(query_ram_cache(node))
+
+    if not RAM_accessible:
+        click.echo(click.style('Unable to fetch detailed RAM information. RAM is not accessible', fg='yellow'))
 
     return ram_banks, ram_cache
 
@@ -78,9 +85,16 @@ def parse_lshw(sudo: bool = False):
     return ET.fromstring(result.stdout.decode())
 
 
-def query_ram_bank(node: ET.Element) -> t.Mapping[str, t.Any]:
+def query_ram_bank(node: ET.Element) -> t.Tuple[t.Mapping[str, t.Any], bool]:
     """Extract information about given RAM bank from XML node."""
-    ram_bank = {'product': '', 'vendor': '', 'serial': '', 'description': '', 'slot': ''}
+    RAM_accessible = True
+    ram_bank = {'product': '',
+                'vendor': '',
+                'serial': '',
+                'description': '',
+                'slot': '',
+                'clock': '',
+                'size': ''}
     try:
         bank_product = node.findall('./product')
         ram_bank['product'] = bank_product[0].text
@@ -93,15 +107,13 @@ def query_ram_bank(node: ET.Element) -> t.Mapping[str, t.Any]:
         bank_slot = node.findall('./slot')
         ram_bank['slot'] = bank_slot[0].text
     except IndexError:
-        click.echo(click.style('Unable to fetch detailed RAM information. RAM is not accessible', fg='yellow'))
+        RAM_accessible = False
 
     bank_size = node.findall('./size')
     bank_clock = node.findall('./clock')
-    if len(bank_size) != 1 or len(bank_clock) != 1:
-        _LOG.warning(f'there should be exactly one size and clock value for a bank but there are'
-                     f' {len(bank_size)} and {len(bank_clock)} respectively')
-    _LOG.debug(ET.tostring(node, encoding='utf8', method='xml').decode())
-    assert bank_size[0].text is not None
+    # if len(bank_size) != 1 or len(bank_clock) != 1:
+    #     click.echo(click.style(f'there should be exactly one size and clock value for a bank but there are'
+    #                            f' {len(bank_size)} and {len(bank_clock)} respectively', fg='yellow'))
     ram_bank['memory'] = bank_size[0].text
     try:
         if bank_clock[0].text is not None:
@@ -109,11 +121,11 @@ def query_ram_bank(node: ET.Element) -> t.Mapping[str, t.Any]:
     except IndexError:
         pass
 
-    return ram_bank
+    return ram_bank, RAM_accessible
 
 
 def query_ram_cache(node: ET.Element) -> t.Mapping[str, t.Any]:
-    ram_cache = {}
+    ram_cache = {'slot': 'NA', 'physid': 'NA', 'capacity': 'NA'}
     cache_slot = node.findall('./slot')
     ram_cache['slot'] = cache_slot[0].text
     cache_physid = node.findall('./physid')
