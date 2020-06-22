@@ -17,4 +17,4 @@ def query_swap() -> t.Optional[int]:
 
 
 def print_swap_info(swap: int) -> None:
-    click.echo(click.style(f'Swap size: {str(swap)}', fg='red'))
+    click.echo(click.style(f'Swap size: {str(swap)}', fg='blue'))

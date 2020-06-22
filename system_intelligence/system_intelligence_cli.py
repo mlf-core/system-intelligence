@@ -29,7 +29,7 @@ def main(scope, verbose, output_format, output):
     \__ \ |_| \__ \ ||  __/ | | | | |_____| | | | | ||  __/ | | | (_| |  __/ | | | (_|  __/
     |___/\__, |___/\__\___|_| |_| |_|     |_|_| |_|\__\___|_|_|_|\__, |\___|_| |_|\___\___|
           |___/                                                   |___/
-    """, fg='red'))
+    """, fg='blue'))
 
     if not scope:
         click.echo(click.style('Please choose a scope! Run ', fg='red')

@@ -81,16 +81,19 @@ def parse_lshw(sudo: bool = False):
 def query_ram_bank(node: ET.Element) -> t.Mapping[str, t.Any]:
     """Extract information about given RAM bank from XML node."""
     ram_bank = {}
-    bank_product = node.findall('./product')
-    ram_bank['product'] = bank_product[0].text
-    bank_vendor = node.findall('./vendor')
-    ram_bank['vendor'] = bank_vendor[0].text
-    bank_serial = node.findall('./serial')
-    ram_bank['serial'] = bank_serial[0].text
-    bank_description = node.findall('./description')
-    ram_bank['description'] = bank_description[0].text
-    bank_slot = node.findall('./slot')
-    ram_bank['slot'] = bank_slot[0].text
+    try:
+        bank_product = node.findall('./product')
+        ram_bank['product'] = bank_product[0].text
+        bank_vendor = node.findall('./vendor')
+        ram_bank['vendor'] = bank_vendor[0].text
+        bank_serial = node.findall('./serial')
+        ram_bank['serial'] = bank_serial[0].text
+        bank_description = node.findall('./description')
+        ram_bank['description'] = bank_description[0].text
+        bank_slot = node.findall('./slot')
+        ram_bank['slot'] = bank_slot[0].text
+    except IndexError:
+        click.echo(click.style('Unable to fetch detailed RAM information. RAM is not accessible', fg='yellow'))
 
     bank_size = node.findall('./size')
     bank_clock = node.findall('./clock')
