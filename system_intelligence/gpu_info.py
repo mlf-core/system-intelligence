@@ -1,6 +1,7 @@
 """Functions to query GPUs in the system."""
 
 import typing as t
+import importlib
 
 import click
 from rich.console import Console
@@ -18,14 +19,13 @@ compute_capability_to_architecture = {
     8: 'Ampere'
 }
 
+
 try:
     import pycuda
     import pycuda.driver as cuda
     import pycuda.autoinit
-
 except ImportError:
     cuda = None
-    click.echo(click.style('Unable to import package pycuda. GPU information may be limited.', fg='yellow'))
 except pycuda._driver.Error:  # pylint: disable = protected-access
     cuda = None  # pylint: disable = invalid-name
     click.echo(click.style('Unable to initialize CUDA. CPU information may be limited.', fg='yellow'))
@@ -33,6 +33,9 @@ except pycuda._driver.Error:  # pylint: disable = protected-access
 
 def query_gpus(**_) -> t.List[t.Mapping[str, t.Any]]:
     """Get information about all GPUs."""
+    if not is_cuda_accessible():
+        click.echo(click.style('Unable to import package pycuda. GPU information may be limited.', fg='yellow'))
+
     GPU = cuda is not None
 
     if not GPU:
@@ -106,3 +109,11 @@ def print_gpus_info(gpus_info: list):
 
     console = Console()
     console.print(table)
+
+
+def is_cuda_accessible() -> bool:
+    pycuda_import = importlib.util.find_spec('pycuda')
+    pycuda_driver_import = importlib.util.find_spec('pycuda.driver')
+    pycuda_autoinit_import = importlib.util.find_spec('pycuda.autoinit')
+
+    return pycuda_import is not None and pycuda_driver_import is not None and pycuda_autoinit_import is not None
