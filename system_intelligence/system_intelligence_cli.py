@@ -11,7 +11,7 @@ from system_intelligence.query import query_and_export
                 type=click.Choice(['all', 'cpu', 'gpus', 'ram', 'software', 'host', 'os', 'hdd', 'swap', 'network']),
                 nargs=-1)
 @click.option('--verbose/--silent', default=False)
-@click.option('-f', '--format', type=click.Choice(['raw', 'json', 'yml']), default='raw',
+@click.option('-f', '--output_format', type=click.Choice(['raw', 'json', 'yml']), default='raw',
               help='output format')
 @click.option('-o', '--output', type=str,
               help='Output file path.')
