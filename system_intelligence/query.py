@@ -1,6 +1,7 @@
 """Query and export system data in one step."""
 
 import json
+import pathlib
 import typing as t
 
 from ruamel.yaml import YAML
@@ -16,23 +17,13 @@ from .ram_info import query_ram, print_ram_info  # noqa F401
 from .software_info import query_software, print_software_info  # noqa F401
 from .swap_info import query_swap, print_swap_info  # noqa F401
 
-JSON_INDENT = 2
 
-JSON_ENSURE_ASCII = False
-
-
-def query_and_export(query_scope: str, verbose: bool, export_format: str, export_target: t.Any, **kwargs):
-    """Query the given scope of the system and export results in a given format to a given target.
-
-    Currently implemented values are:
-
-    - query_scope: all, cpu, gpu, ram.
-    - export_format: json, raw.
-    - export_target: sys.stdout, sys.stderr, path.
-    """
+def query_and_export(query_scope: str, verbose: bool, export_format: str, output: t.Any, **kwargs):
+    """Query the given scope of the system and export results in a given format to a given target."""
     info = query(query_scope, verbose, **kwargs)
-    if export_target:
-        export(info, export_format, export_target)
+    if output:
+        output = pathlib.Path(output)
+        export(info, export_format, output)
 
 
 def query(query_scope: str, verbose: bool, **kwargs) -> t.Any:
@@ -56,7 +47,7 @@ def export(info, export_format: str, export_target: t.Any):
     """Export information obtained by system query to a specified format."""
     if export_format == 'json':
         with open(str(export_target), 'w', encoding='utf-8') as json_file:
-            json.dump(info, json_file, indent=JSON_INDENT, ensure_ascii=JSON_ENSURE_ASCII)
+            json.dump(info, json_file, indent=2, ensure_ascii=False)
     elif export_format == 'raw':
         with open(str(export_target), 'a', encoding='utf-8') as text_file:
             text_file.write(str(info))

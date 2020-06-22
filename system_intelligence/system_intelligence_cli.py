@@ -15,11 +15,11 @@ WD = os.path.dirname(__file__)
                 type=click.Choice(['all', 'cpu', 'gpus', 'ram', 'software', 'host', 'os', 'hdd', 'swap', 'network']),
                 nargs=-1)
 @click.option('--verbose/--silent', default=False)
-@click.option('--format', type=click.Choice(['raw', 'json', 'yml']), default='raw',
+@click.option('-f', '--format', type=click.Choice(['raw', 'json', 'yml']), default='raw',
               help='output format')
-@click.option('--target', type=str,
+@click.option('-o', '--output', type=str,
               help='Output file path.')
-def main(scope, verbose, format, target):
+def main(scope, verbose, format, output):
     """
     Query your system for hardware and software related information.
 
@@ -41,10 +41,8 @@ def main(scope, verbose, format, target):
                    + click.style('for more information.', fg='red'))
         sys.exit(1)
 
-    if target:
-        target = pathlib.Path(target)
     for query in scope:
-        query_and_export(query_scope=query, verbose=verbose, export_format=format, export_target=target)
+        query_and_export(query_scope=query, verbose=verbose, export_format=format, output=output)
 
 
 if __name__ == "__main__":
