@@ -71,7 +71,7 @@ def print_hdd_info(hdd_info: dict) -> None:
     for hdd, details in hdd_info['model'].items():
         print(details['model'])
         print(details['size'])
-        table.add_row(hdd, hdd['model'], bytes_to_hreadable_string(details['size']))
+        table.add_row(hdd, details['model'], bytes_to_hreadable_string(details['size']))
 
     console = Console()
     console.print(table)
