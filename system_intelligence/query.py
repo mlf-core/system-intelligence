@@ -6,7 +6,6 @@ import typing as t
 
 from ruamel.yaml import YAML
 
-from .all_info import query_all
 from .cpu_info import query_cpu, print_cpu_info  # noqa F401
 from .gpu_info import query_gpus, print_gpus_info  # noqa F401
 from .hdd_info import print_hdd_info, query_hdd  # noqa F401
@@ -18,7 +17,7 @@ from .software_info import query_software, print_software_info  # noqa F401
 from .swap_info import query_swap, print_swap_info  # noqa F401
 
 
-def query_and_export(query_scope: str, verbose: bool, export_format: str, output: t.Any, **kwargs):
+def query_and_export(query_scope: list, verbose: bool, export_format: str, output: t.Any, **kwargs):
     """Query the given scope of the system and export results in a given format to a given target."""
     info = query(query_scope, verbose, **kwargs)
     if output:
@@ -26,19 +25,27 @@ def query_and_export(query_scope: str, verbose: bool, export_format: str, output
         export(info, export_format, output)
 
 
-def query(query_scope: str, verbose: bool, **kwargs) -> t.Any:
+def query(query_scope: list, verbose: bool, **kwargs) -> t.Any:
     """Wrap around selected system query functions."""
-    info: t.Any
-    if query_scope == 'all':
-        for scope in ['cpu', 'gpus', 'ram', 'software', 'host', 'os', 'hdd', 'swap', 'network']:
-            query(scope, verbose)
-        info = query_all(**kwargs)
-    else:
-        # Build the function name to call using the scope and call it by name.
-        get_info = f'query_{query_scope}'
-        info = globals()[get_info]()
-        print_info = f'print_{query_scope}_info'
-        globals()[print_info](info)
+    info = {'cpu': {},
+            'gpus': {},
+            'ram': {},
+            'host': {},
+            'os': {},
+            'hdd': {},
+            'swap': {},
+            'network': {},
+            'software': {}}
+    if query_scope == ['all']:
+        query_scope = ['cpu', 'gpus', 'ram', 'software', 'host', 'os', 'hdd', 'swap', 'network']
+
+    for query in query_scope:
+        get_info = f'query_{query}'
+        query_info = globals()[get_info]()
+        info[query] = query_info
+        if verbose:
+            print_info = f'print_{query}_info'
+            globals()[print_info](query_info)
 
     return info
 

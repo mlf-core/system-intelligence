@@ -10,7 +10,7 @@ def bytes_to_hreadable_string(nbytes: int) -> str:
     suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
 
     # No result
-    if not nbytes:
+    if not nbytes or nbytes == 'NA':
         return ''
 
     if isinstance(nbytes, str):
@@ -34,7 +34,7 @@ def hz_to_hreadable_string(hz: int) -> str:
     suffixes = ['Hz', 'kHz', 'MHz', 'GHz']
 
     # No result
-    if not hz:
+    if not hz or hz == 'NA':
         return ''
 
     if isinstance(hz, str):

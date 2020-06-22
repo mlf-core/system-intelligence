@@ -10,7 +10,7 @@ from system_intelligence.query import query_and_export
 @click.argument('scope',
                 type=click.Choice(['all', 'cpu', 'gpus', 'ram', 'software', 'host', 'os', 'hdd', 'swap', 'network']),
                 nargs=-1)
-@click.option('--verbose/--silent', default=False)
+@click.option('--verbose/--silent', default=True)
 @click.option('-f', '--output_format', type=click.Choice(['raw', 'json', 'yml']), default='raw',
               help='output format')
 @click.option('-o', '--output', type=str,
@@ -29,7 +29,12 @@ def main(scope, verbose, output_format, output):
     \__ \ |_| \__ \ ||  __/ | | | | |_____| | | | | ||  __/ | | | (_| |  __/ | | | (_|  __/
     |___/\__, |___/\__\___|_| |_| |_|     |_|_| |_|\__\___|_|_|_|\__, |\___|_| |_|\___\___|
           |___/                                                   |___/
-    """, fg='red'))
+    """, fg='blue'))
+
+    if not verbose and not output:
+        click.echo(click.style('Please specify an output path or run'
+                               ' system-intelligence without the silent option!', fg='yellow'))
+        sys.exit(1)
 
     if not scope:
         click.echo(click.style('Please choose a scope! Run ', fg='red')
@@ -37,8 +42,7 @@ def main(scope, verbose, output_format, output):
                    + click.style('for more information.', fg='red'))
         sys.exit(1)
 
-    for query in scope:
-        query_and_export(query_scope=query, verbose=verbose, export_format=output_format, output=output)
+    query_and_export(query_scope=list(scope), verbose=verbose, export_format=output_format, output=output)
 
 
 if __name__ == "__main__":

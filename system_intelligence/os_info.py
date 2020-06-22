@@ -14,4 +14,4 @@ def query_os():
 
 
 def print_os_info(system):
-    click.echo(click.style(system, fg='red'))
+    click.echo(click.style(system, fg='blue'))
