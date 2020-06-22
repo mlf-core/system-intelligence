@@ -1,0 +1,34 @@
+{
+  "cpu": {
+    "vendor_id_raw": "GenuineIntel",
+    "hardware_raw": null,
+    "brand_raw": "Intel(R) Core(TM) i5-7300HQ CPU @ 2.50GHz",
+    "arch": "X86_64",
+    "logical_cores": "4",
+    "physical_cores": "4",
+    "clock": "3099.9849999999997 MHz",
+    "clock_min": "800.0 MHz",
+    "clock_max": "3500.0 MHz",
+    "cache": "1: '131.07 kHz', 2: '1.05 MHz', 3: '6.29 MHz'"
+  },
+  "gpus": [
+    {
+      "architecture": "Pascal",
+      "brand": "GeForce GTX 1050",
+      "compute_capability": "6.1",
+      "memory": "3.95 GB",
+      "memory_clock": "3.5 MHz",
+      "clock": "1.49 MHz",
+      "multiprocessors": "5",
+      "cores": "640",
+      "warp_size": "32"
+    }
+  ],
+  "ram": {},
+  "host": {},
+  "os": {},
+  "hdd": {},
+  "swap": {},
+  "network": {},
+  "software": {}
+}

@@ -58,7 +58,7 @@ def query_ram_banks_cache(sudo: bool = False, **_) \
         return [], []
     nodes = xml_root.findall('.//node')
     _LOG.debug(f'{len(nodes)} nodes')
-    
+
     ram_banks = []
     ram_cache = []
     RAM_accessible = True

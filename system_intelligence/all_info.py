@@ -24,3 +24,6 @@ def query_all(**kwargs) -> t.Mapping[str, t.Any]:
         'swap': query_swap(),
         'network': query_network()
         }
+
+
+ ##     USE THIS

@@ -37,8 +37,7 @@ def main(scope, verbose, output_format, output):
                    + click.style('for more information.', fg='red'))
         sys.exit(1)
 
-    for query in scope:
-        query_and_export(query_scope=query, verbose=verbose, export_format=output_format, output=output)
+    query_and_export(query_scope=list(scope), verbose=verbose, export_format=output_format, output=output)
 
 
 if __name__ == "__main__":
