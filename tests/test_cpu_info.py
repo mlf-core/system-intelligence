@@ -2,19 +2,16 @@
 
 import unittest
 
-from system_intelligence.available_features import CPU
 from system_intelligence.cpu_info import _get_cache_size
 
 
 class Tests(unittest.TestCase):
 
-    @unittest.skipIf(not CPU, 'skipping CPU cache query')
     def test_cpu_cache_size(self):
         info = _get_cache_size(1, {'l1_cache_size': '512'})
         self.assertIsInstance(info, int)
         self.assertEqual(info, 512 * 1024)
 
-    @unittest.skipIf(not CPU, 'skipping CPU cache query')
     def test_cpu_cache_size_with_units(self):
         info = _get_cache_size(1, {'l1_cache_size': '512 kB'})
         self.assertIsInstance(info, int)
