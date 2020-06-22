@@ -36,7 +36,7 @@ def query_hdd_model() -> t.Dict[str, dict]:
                 hdd['model'] = device_.attributes.asstring('model')
                 break
             except KeyError:
-                pass
+                hdd['model'] = ''
         hdds[device.device_node] = hdd
 
     return hdds
@@ -69,8 +69,7 @@ def print_hdd_info(hdd_info: dict) -> None:
     table.add_column('Model', justify='left')
 
     for hdd, details in hdd_info['model'].items():
-        model_details = details['model'] if details['model'] is not None else ''
-        table.add_row(hdd, model_details, bytes_to_hreadable_string(details['size']))
+        table.add_row(hdd, hdd['model'], bytes_to_hreadable_string(details['size']))
 
     console = Console()
     console.print(table)
