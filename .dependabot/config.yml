@@ -7,4 +7,4 @@ update_configs:
     default_labels:
         - "DEPENDABOT"
     commit_message:
-        prefix: "[DEPENDABOT] "
+        prefix: "[DEPENDABOT]"
