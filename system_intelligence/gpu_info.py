@@ -31,11 +31,8 @@ def query_gpus(**_) -> t.List[t.Mapping[str, t.Any]]:
     """Get information about all GPUs."""
     if not is_cuda_available:
         click.echo(click.style('Unable to import package pycuda. GPU information may be limited.', fg='yellow'))
-
-    GPU = cuda is not None
-
-    if not GPU:
         return []
+    
     gpus = []
     for i in range(cuda.Device.count()):
         device = cuda.Device(i)
