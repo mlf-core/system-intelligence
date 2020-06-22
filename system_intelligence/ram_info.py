@@ -80,7 +80,7 @@ def parse_lshw(sudo: bool = False):
 
 def query_ram_bank(node: ET.Element) -> t.Mapping[str, t.Any]:
     """Extract information about given RAM bank from XML node."""
-    ram_bank = {}
+    ram_bank = {'product': '', 'vendor': '', 'serial': '', 'description': '', 'slot': ''}
     try:
         bank_product = node.findall('./product')
         ram_bank['product'] = bank_product[0].text
