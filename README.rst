@@ -39,7 +39,7 @@ Query your system for all hardware and software related information.
 * Free software: Apache2.0
 * Documentation: https://system-intelligence.readthedocs.io.
 
-.. image:: images/overview.gif
+.. image:: https://user-images.githubusercontent.com/21954664/85394622-1fdf6780-b54f-11ea-8aaa-25478b90ca0d.gif
   :alt: system-intelligence overview
 
 
