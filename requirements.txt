@@ -1,2 +1,7 @@
-
-click
+click==7.1.2
+rich==2.2.3
+pint==0.13
+psutil==5.7.0
+py-cpuinfo==6.0.0
+pyudev==0.22.0
+ruamel.yaml==0.16.10

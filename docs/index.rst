@@ -7,10 +7,9 @@ Welcome to system-intelligence's documentation!
    readme
    installation
    usage
-   modules
    authors
    changelog
-   codeofconduct
+   code_of_conduct
 
 Indices and tables
 ==================
