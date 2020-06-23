@@ -37,7 +37,7 @@ VERSION_QUERY_FLAGS = {
     # other
     'java': None,
     'ruby': None,
-    'nvcc': None,
+    'nvcc': '--version | tail -1',
     'mpirun': None,
     'spack': None}
 
@@ -76,7 +76,7 @@ def query_software():
         if flag is None:
             flag = DEFAULT_VERSION_QUERY_FLAG
         cmd = [program, flag]
-        _LOG.debug('running "%s"', cmd)
+        _LOG.debug(f'running "{cmd}"')
         version = _run_version_query(cmd)
         software_info[program] = {'path': path, 'version': version}
 
