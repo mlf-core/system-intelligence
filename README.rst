@@ -17,8 +17,8 @@ system-intelligence
         :alt: Github Workflow Tests Status
 
 .. image:: https://img.shields.io/pypi/v/system_intelligence.svg
-        :target: https://img.shields.io/pypi/v/system_intelligence.svg
         :target: https://pypi.python.org/pypi/system_intelligence
+        :alt: PyPI Status
 
 .. image:: https://readthedocs.org/projects/system-intelligence/badge/?version=latest
         :target: https://system-intelligence.readthedocs.io/en/latest/?badge=latest
@@ -39,11 +39,16 @@ Query your system for all hardware and software related information.
 * Free software: Apache2.0
 * Documentation: https://system-intelligence.readthedocs.io.
 
+.. image:: images/overview.gif
+  :alt: system-intelligence overview
+
 
 Features
 --------
 
-* TODO
+* Query your system for hardware and software related information
+* Supports queries for Hostname, OS, CPU, GPUs, RAM, HDDs, Network and Software
+* Supports Rich stdout or saving to a raw, json or yml file
 
 Credits
 -------

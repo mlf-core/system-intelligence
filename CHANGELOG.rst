@@ -10,19 +10,9 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Added**
 
-**Fixed**
-
-**Dependencies**
-
-**Deprecated**
-
-
-0.1.0 (2020-06-11)
-------------------
-
-**Added**
-
-* Created the project using COOKIETEMPLE
+* Scopes all, Hostname, OS, CPU, GPUs, RAM, HDDs, Network and Software
+* saving to raw, json, yml
+* rich stdout 
 
 **Fixed**
 

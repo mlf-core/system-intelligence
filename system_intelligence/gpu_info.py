@@ -22,14 +22,14 @@ try:
     import pycuda
     import pycuda.driver as cuda
     import pycuda.autoinit  # noqa F401
-    is_cuda_available = True
+    is_CUDA_available = True
 except ModuleNotFoundError:
-    is_cuda_available = False
+    is_CUDA_available = False
 
 
 def query_gpus(**_) -> t.List[t.Mapping[str, t.Any]]:
     """Get information about all GPUs."""
-    if not is_cuda_available:
+    if not is_CUDA_available:
         click.echo(click.style('Unable to import package pycuda. GPU information may be limited.', fg='yellow'))
         return []
 
@@ -37,6 +37,7 @@ def query_gpus(**_) -> t.List[t.Mapping[str, t.Any]]:
     for i in range(cuda.Device.count()):
         device = cuda.Device(i)
         gpus.append(query_gpu(device))
+
     return gpus
 
 

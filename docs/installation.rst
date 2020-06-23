@@ -4,6 +4,9 @@
 Installation
 ============
 
+Please note that system-intelligence currently only offers support for Linux.
+It will very likely also work well on MacOS, but it is unlikely to work on Windows.
+If you want to improve the Windows support please get in touch.
 
 Stable release
 --------------
@@ -12,7 +15,7 @@ To install system-intelligence, run this command in your terminal:
 
 .. code-block:: console
 
-    $ pip install system_intelligence
+    $ pip install system-intelligence
 
 This is the preferred method to install system-intelligence, as it will always install the most recent stable release.
 
@@ -32,13 +35,13 @@ You can either clone the public repository:
 
 .. code-block:: console
 
-    $ git clone git://github.com/zethson/system_intelligence
+    $ git clone git://github.com/mlf-core/system-intelligence
 
 Or download the `tarball`_:
 
 .. code-block:: console
 
-    $ curl -OJL https://github.com/zethson/system_intelligence/tarball/master
+    $ curl -OJL https://github.com/mlf-core/system-intelligence/tarball/master
 
 Once you have a copy of the source, you can install it with:
 
@@ -47,5 +50,5 @@ Once you have a copy of the source, you can install it with:
     $ python setup.py install
 
 
-.. _Github repo: https://github.com/zethson/system_intelligence
-.. _tarball: https://github.com/zethson/system_intelligence/tarball/master
+.. _Github repo: https://github.com/mlfcore/system-intelligence
+.. _tarball: https://github.com/mlfcore/system-intelligence/tarball/master

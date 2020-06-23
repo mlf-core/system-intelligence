@@ -20,7 +20,8 @@ def main(scope, verbose, output_format, output):
     Query your system for hardware and software related information.
 
     Currently supported arguments are
-    'all', 'cpu', 'gpus', 'ram', 'software', 'host', 'os', 'hdd', 'swap', 'network'
+
+    'all', 'cpu', 'gpus', 'ram', 'host', 'os', 'hdd', 'swap', 'network', 'software'
     """
     click.echo(click.style(r"""
                    _                       _       _       _ _ _
