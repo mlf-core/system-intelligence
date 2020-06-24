@@ -2,10 +2,6 @@
 Usage
 =====
 
-To use system-intelligence in a project::
-
-    import system_intelligence
-
 command-line interface
 ----------------------------
 
@@ -44,3 +40,24 @@ To suppress the standard output you may add the option
 .. code-block:: console
 
     $ system_intelligence <scope> --silent
+
+
+Module
+---------
+
+To use system-intelligence in a project::
+
+    import system_intelligence
+
+To run queries you have to import
+
+.. code-block:: python
+
+    from system_intelligence.query import query_and_export
+
+which will allow you to call the ``query_and_export`` function. Please note that it requires a list of a tuple as input.
+This is pretty much a relict of the command line library Click.
+
+.. code-block:: python
+
+    query_and_export(query_scope=list(('all',)), verbose=True, export_format='json', output='system_intelligence.json')::

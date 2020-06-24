@@ -5,3 +5,4 @@ psutil==5.7.0
 py-cpuinfo==6.0.0
 pyudev==0.22.0
 ruamel.yaml==0.16.10
+json2html==1.3.0

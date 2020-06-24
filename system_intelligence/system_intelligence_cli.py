@@ -12,10 +12,12 @@ from system_intelligence.query import query_and_export
                 nargs=-1)
 @click.option('--verbose/--silent', default=True)
 @click.option('-f', '--output_format', type=click.Choice(['raw', 'json', 'yml']), default='raw',
-              help='output format')
+              help='Output file format.')
+@click.option('-g', '--generate_html_table', is_flag=True,
+              help='Specify to create a html output table. Requires output_format and output to be set.')
 @click.option('-o', '--output', type=str,
               help='Output file path.')
-def main(scope, verbose, output_format, output):
+def main(scope, verbose, output_format, generate_html_table, output):
     """
     Query your system for hardware and software related information.
 
@@ -43,7 +45,15 @@ def main(scope, verbose, output_format, output):
                    + click.style('for more information.', fg='red'))
         sys.exit(1)
 
-    query_and_export(query_scope=list(scope), verbose=verbose, export_format=output_format, output=output)
+    if not output and generate_html_table:
+        click.echo(click.style(
+            'Specified --generate_output_table without --output. Will not create a html table.', fg='yellow'))
+
+    query_and_export(query_scope=list(scope),
+                     verbose=verbose,
+                     export_format=output_format,
+                     generate_html_table=generate_html_table,
+                     output=output)
 
 
 if __name__ == "__main__":

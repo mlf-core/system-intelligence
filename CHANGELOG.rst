@@ -5,6 +5,20 @@ Changelog
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 
+1.2.0 (2020-06-24)
+------------------
+
+**Added**
+
+* html table output via --generate_html_table
+
+**Fixed**
+
+**Dependencies**
+
+**Deprecated**
+
+
 1.1.0 (2020-06-23)
 ------------------
 
