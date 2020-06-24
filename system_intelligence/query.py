@@ -5,6 +5,7 @@ import pathlib
 import typing as t
 
 from ruamel.yaml import YAML
+from json2html import *  # noqa F403
 
 from .cpu_info import query_cpu, print_cpu_info  # noqa F401
 from .gpu_info import query_gpus, print_gpus_info  # noqa F401
@@ -17,12 +18,17 @@ from .software_info import query_software, print_software_info  # noqa F401
 from .swap_info import query_swap, print_swap_info  # noqa F401
 
 
-def query_and_export(query_scope: list, verbose: bool, export_format: str, output: t.Any, **kwargs):
+def query_and_export(query_scope: list,
+                     verbose: bool,
+                     export_format: str,
+                     generate_html_table: bool,
+                     output: t.Any,
+                     **kwargs):
     """Query the given scope of the system and export results in a given format to a given target."""
     info = query(query_scope, verbose, **kwargs)
     if output:
         output = pathlib.Path(output)
-        export(info, export_format, output)
+        export(info, export_format, generate_html_table, output)
 
 
 def query(query_scope: list, verbose: bool, **kwargs) -> t.Any:
@@ -50,7 +56,7 @@ def query(query_scope: list, verbose: bool, **kwargs) -> t.Any:
     return info
 
 
-def export(info, export_format: str, export_target: t.Any):
+def export(info, export_format: str, generate_html_table: bool, export_target: t.Any):
     """Export information obtained by system query to a specified format."""
     if export_format == 'json':
         with open(str(export_target), 'w', encoding='utf-8') as json_file:
@@ -63,3 +69,19 @@ def export(info, export_format: str, export_target: t.Any):
         yaml.dump(info, export_target)
     else:
         raise NotImplementedError(f'format={export_format} target={export_target}')
+    # write HTML Table
+    if generate_html_table:
+        html_output_name = f'{str(export_target).split(".")[0]}.html'
+        with open(str(html_output_name), 'w', encoding='utf-8') as html_file:
+            json_formatted = json.dumps(info, indent=2, ensure_ascii=False)
+            html_table = json2html.convert(json=json_formatted,  # noqa F405
+                                           table_attributes="id=\"system-intelligence\""
+                                           + "class=\"table table-condensed table-bordered table-hover\"")
+            html_file.write('<!DOCTYPE html>\n')
+            html_file.write('<html lang="en">\n')
+            html_file.write('<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"'
+                            + 'rel="stylesheet"'
+                            + ' integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"'
+                            + ' crossorigin="anonymous">\n')
+
+            html_file.write(html_table)

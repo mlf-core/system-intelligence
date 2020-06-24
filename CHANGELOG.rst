@@ -10,6 +10,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Added**
 
+* html table output via --generate_html_table
+
 **Fixed**
 
 **Dependencies**
