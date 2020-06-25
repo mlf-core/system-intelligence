@@ -23,7 +23,7 @@ try:
     import pycuda.driver as cuda
     import pycuda.autoinit  # noqa F401
     is_CUDA_available = True
-except ModuleNotFoundError:
+except (ModuleNotFoundError, ImportError):
     is_CUDA_available = False
 
 

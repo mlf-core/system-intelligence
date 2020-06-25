@@ -12,6 +12,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Fixed**
 
+* Import error if pycuda is not available
+
 **Dependencies**
 
 **Deprecated**
