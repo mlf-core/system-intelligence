@@ -5,6 +5,20 @@ Changelog
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 
+1.2.1 (2020-06-25)
+------------------
+
+**Added**
+
+**Fixed**
+
+* Import error if pycuda is not available
+
+**Dependencies**
+
+**Deprecated**
+
+
 1.2.0 (2020-06-24)
 ------------------
 

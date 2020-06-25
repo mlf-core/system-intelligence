@@ -1,7 +1,7 @@
 domain: cli
 language: python
 project_slug: system_intelligence
-template_version: '1.2.0 # <<COOKIETEMPLE_NO_BUMP>>'
+template_version: '1.2.1 # <<COOKIETEMPLE_NO_BUMP>>'
 template_handle: cli-python
 github_username: zethson
 full_name: Lukas Heumos
@@ -9,7 +9,7 @@ email: lukas.heumos@posteo.net
 project_name: system-intelligence
 project_short_description: Query your system for all hardware and software related
   information.
-version: 1.2.0
+version: 1.2.1
 license: Apache2.0
 command_line_interface: Click
 testing_library: pytest
