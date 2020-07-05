@@ -4,6 +4,9 @@ project_slug: system_intelligence
 template_version: '1.2.1 # <<COOKIETEMPLE_NO_BUMP>>'
 template_handle: cli-python
 github_username: zethson
+is_github_repo: true
+is_repo_private: false
+is_github_orga: true
 full_name: Lukas Heumos
 email: lukas.heumos@posteo.net
 project_name: system-intelligence
