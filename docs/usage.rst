@@ -60,4 +60,4 @@ This is pretty much a relict of the command line library Click.
 
 .. code-block:: python
 
-    query_and_export(query_scope=list(('all',)), verbose=True, export_format='json', output='system_intelligence.json')::
+    query_and_export(query_scope=list(('all',)), verbose=True, export_format='json', generate_html_table=True, output='system_intelligence.json')::
