@@ -64,10 +64,9 @@ def _get_cache_size(level: int, cpuinfo_data: dict) -> t.Optional[int]:
 
     If no units are provided, assume source data is in KiB.
     """
-    raw_value = cpuinfo_data.get(f'l{level}_data_cache_size', cpuinfo_data.get(f'l{level}_cache_size', None))
+    raw_value = str(cpuinfo_data.get(f'l{level}_data_cache_size', cpuinfo_data.get(f'l{level}_cache_size', None)))
     if raw_value is None:
         return None
-    assert isinstance(raw_value, str), (type(raw_value), raw_value)
     # KB, MB: "this practice frequently leads to confusion and is deprecated"
     # see https://en.wikipedia.org/wiki/JEDEC_memory_standards
     if raw_value.endswith('KB'):

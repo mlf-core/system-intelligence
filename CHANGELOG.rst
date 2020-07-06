@@ -5,6 +5,21 @@ Changelog
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 
+1.2.2 (2020-07-06)
+------------------
+
+**Added**
+
+**Fixed**
+
+* cpu cache raw_level is now always a string (fixes py-cpuinfo 7.0.0 returning integers)
+* Replaced gif with full size gif
+
+**Dependencies**
+
+**Deprecated**
+
+
 1.2.1 (2020-06-25)
 ------------------
 
