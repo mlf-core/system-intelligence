@@ -20,4 +20,7 @@ jobs:
           python-version: ${{ matrix.python }}
 
       - name: Build system_intelligence
-        run: python setup.py clean --all install
+        run: pip install .
+
+      - name: Run scope <all>
+        run: system-intelligence all
