@@ -12,6 +12,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Fixed**
 
+* cpu cache raw_level is now always a string (fixes py-cpuinfo 7.0.0 returning integers)
 * Replaced gif with full size gif
 
 **Dependencies**
