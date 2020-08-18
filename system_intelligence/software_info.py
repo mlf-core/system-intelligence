@@ -53,18 +53,17 @@ PYTHON_PACKAGES = [
 
 
 def _run_version_query(cmd, version_line=None, **kwargs) -> t.Optional[str]:
-    if len(cmd) > 1:
-        shell_required = False
-        try:
-            result, error = subprocess.Popen(cmd, universal_newlines=True, shell=shell_required,
-                                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
-        except(subprocess.TimeoutExpired, subprocess.CalledProcessError):
-            return None
-        except FileNotFoundError:
-            return None
-        version_raw = result.stdout.decode()
-        if not version_raw:
-            version_raw = result.stderr.decode()
+    shell_required = True if len(cmd) < 2 else False
+    try:
+        result, error = subprocess.Popen(cmd, universal_newlines=True, shell=shell_required,
+                                         stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+    except(subprocess.TimeoutExpired, subprocess.CalledProcessError):
+        return None
+    except FileNotFoundError:
+        return None
+    version_raw = result
+    if not version_raw:
+        version_raw = error 
     # The tool only has a single string command -> it needs to be communicated with shell=True
     try:
         if version_line:
