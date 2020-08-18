@@ -38,8 +38,8 @@ VERSION_QUERY_FLAGS = {
     'pip': (None, None),
     # other
     'nvcc': (None, 3),  # CUDA
-    'mkl': ('python -c "import mkl; print(mkl.get_version_string())"', None),
-    'java': ('-version', None),
+    # 'mkl': ('python -c "import mkl; print(mkl.get_version_string())"', None),
+    # 'java': ('-version', None),
     'ruby': (None, None),
     'mpirun': (None, None),
     'spack': (None, None)
@@ -47,7 +47,8 @@ VERSION_QUERY_FLAGS = {
 
 PYTHON_PACKAGES = [
     'chainer', 'Cython', 'h5py', 'ipython', 'mpi4py', 'Nuitka', 'numba', 'numpy',
-    'pandas', 'pycuda', 'pyopencl', 'scikit-learn', 'scipy', 'tensorflow', 'pytorch'
+    'pandas', 'pycuda', 'pyopencl', 'scikit-learn', 'scipy', 'tensorflow', 'pytorch',
+    'xgboost'
 ]
 
 
