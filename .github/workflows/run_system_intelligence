@@ -1,13 +1,12 @@
-name: Build system_intelligence Package
+name: Run system_intelligence
 
 on: [push]
 
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
+  run:
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
         python: [3.7, 3.8]
 
     steps:
@@ -19,5 +18,8 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
 
-      - name: Build system_intelligence
+      - name: Build system-intelligence
         run: pip install .
+
+      - name: Run system-intelligence all
+        run: system-intelligence all
