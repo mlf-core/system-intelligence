@@ -38,8 +38,8 @@ VERSION_QUERY_FLAGS = {
     'pip': (None, None),
     # other
     'nvcc': (None, 3),  # CUDA
-    # 'mkl': ('python -c "import mkl; print(mkl.get_version_string())"', None),
-    # 'java': ('-version', None),
+    'mkl': ('python -c "import mkl; print(mkl.get_version_string())"', None),
+    'java': ('-version', None),
     'ruby': (None, None),
     'mpirun': (None, None),
     'spack': (None, None)
@@ -53,16 +53,19 @@ PYTHON_PACKAGES = [
 
 
 def _run_version_query(cmd, version_line=None, **kwargs) -> t.Optional[str]:
-    try:
-        result = subprocess.run(
-            cmd, timeout=5, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs)
-    except (subprocess.TimeoutExpired, subprocess.CalledProcessError):
-        return None
-    except FileNotFoundError:  # on Windows
-        return None
-    version_raw = result.stdout.decode()
-    if not version_raw:
-        version_raw = result.stderr.decode()
+    if len(cmd) > 1:
+        try:
+            result = subprocess.run(cmd, timeout=5, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs)
+        except(subprocess.TimeoutExpired, subprocess.CalledProcessError):
+            return None
+        except FileNotFoundError:
+            return None
+        version_raw = result.stdout.decode()
+        if not version_raw:
+            version_raw = result.stderr.decode()
+    else:
+        version_raw, error = subprocess.Popen(cmd, universal_newlines=True, shell=True,
+                                              stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
     try:
         if version_line:
             version = version_raw.splitlines()[version_line]
@@ -78,13 +81,16 @@ def query_software():
     software_info = {}
     for program, version_tuple in VERSION_QUERY_FLAGS.items():
         path = shutil.which(program)
-        if path is None:
+        if path is None and program is not 'mkl':
             continue
         if version_tuple[0] is None:
             version_flag = DEFAULT_VERSION_QUERY_FLAG
         else:
             version_flag = version_tuple[0]
-        cmd = [program, version_flag]
+        if not path:
+            cmd = [version_flag]
+        else:
+            cmd = [program, version_flag]
         _LOG.debug(f'running "{cmd}"')
         version = _run_version_query(cmd, version_tuple[1])
         software_info[program] = {'path': path, 'version': version}
@@ -121,7 +127,10 @@ def print_software_info(software_info: dict):
     table.add_column('Version', justify='left')
 
     for package, version in software_info['python']['packages'].items():
-        package_version = version['version'].split('==')[1]
+        try:
+            package_version = version['version'].split('==')[1]
+        except IndexError:
+            package_version =version['version'] 
         table.add_row(package, package_version)
 
     console.print(table)
