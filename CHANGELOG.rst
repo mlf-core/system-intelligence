@@ -10,7 +10,11 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Added**
 
+* mkl to supported software to query for
+
 **Fixed**
+
+* Python dependency version handling
 
 **Dependencies**
 
