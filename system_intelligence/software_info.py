@@ -47,21 +47,29 @@ VERSION_QUERY_FLAGS = {
 
 PYTHON_PACKAGES = [
     'chainer', 'Cython', 'h5py', 'ipython', 'mpi4py', 'Nuitka', 'numba', 'numpy',
-    'pandas', 'pycuda', 'pyopencl', 'scikit-learn', 'scipy', 'tensorflow', 'pytorch'
+    'pandas', 'pycuda', 'pyopencl', 'scikit-learn', 'scipy', 'tensorflow', 'pytorch',
+    'xgboost'
 ]
 
 
-def _run_version_query(cmd, version_line=None, **kwargs) -> t.Optional[str]:
+def _run_version_query(cmd, version_line=None) -> t.Optional[str]:
+    shell_required = True if len(cmd) < 2 or isinstance(cmd, str) else False
     try:
-        result = subprocess.run(
-            cmd, timeout=5, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs)
-    except (subprocess.TimeoutExpired, subprocess.CalledProcessError):
+        result, error = subprocess.Popen(cmd, universal_newlines=True, shell=shell_required,
+                                         stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+    except(subprocess.TimeoutExpired, subprocess.CalledProcessError):
         return None
-    except FileNotFoundError:  # on Windows
+    except FileNotFoundError:
         return None
-    version_raw = result.stdout.decode()
-    if not version_raw:
-        version_raw = result.stderr.decode()
+    version_raw = result
+    if error and not version_raw:
+        if 'Traceback' in error or 'Check the permissions and owner of that directory.' in error:
+            version_raw, error = None, None
+        else:
+            # When automatically written to stderr -> e.g. java -version writes to stderr
+            version_raw = error
+    if not error and not version_raw:
+        return None
     try:
         if version_line:
             version = version_raw.splitlines()[version_line]
@@ -74,16 +82,21 @@ def _run_version_query(cmd, version_line=None, **kwargs) -> t.Optional[str]:
 
 def query_software():
     """Get information about relevant software."""
+    no_path_exceptions = ['mkl']
     software_info = {}
     for program, version_tuple in VERSION_QUERY_FLAGS.items():
         path = shutil.which(program)
-        if path is None:
+        if path is None and program not in no_path_exceptions:
             continue
         if version_tuple[0] is None:
             version_flag = DEFAULT_VERSION_QUERY_FLAG
         else:
             version_flag = version_tuple[0]
-        cmd = [program, version_flag]
+        # The package cannot be found -> It must be one of the exceptions
+        if not path:
+            cmd = [version_flag]
+        else:
+            cmd = [program, version_flag]
         _LOG.debug(f'running "{cmd}"')
         version = _run_version_query(cmd, version_tuple[1])
         software_info[program] = {'path': path, 'version': version}
@@ -91,8 +104,7 @@ def query_software():
     # python packages
     py_packages = {}
     for package in PYTHON_PACKAGES:
-        version = _run_version_query(
-            f'python -m pip freeze | grep {package}', shell=True)
+        version = _run_version_query(f'python -m pip freeze | grep {package}')
         if version is None:
             continue
         py_packages[package] = {'version': version}
@@ -120,7 +132,10 @@ def print_software_info(software_info: dict):
     table.add_column('Version', justify='left')
 
     for package, version in software_info['python']['packages'].items():
-        package_version = version['version'].split('==')[1]
+        try:
+            package_version = version['version'].split('==')[1]
+        except IndexError:
+            package_version = version['version']
         table.add_row(package, package_version)
 
     console.print(table)
