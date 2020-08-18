@@ -38,6 +38,7 @@ VERSION_QUERY_FLAGS = {
     'pip': (None, None),
     # other
     'nvcc': (None, 3),  # CUDA
+    'mkl': ('python -c "import mkl; print(mkl.get_version_string())"', None),
     'java': ('-version', None),
     'ruby': (None, None),
     'mpirun': (None, None),
