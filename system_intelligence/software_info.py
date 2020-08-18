@@ -135,7 +135,7 @@ def print_software_info(software_info: dict):
         try:
             package_version = version['version'].split('==')[1]
         except IndexError:
-            package_version =version['version']
+            package_version = version['version']
         table.add_row(package, package_version)
 
     console.print(table)
