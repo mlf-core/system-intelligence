@@ -54,8 +54,10 @@ PYTHON_PACKAGES = [
 
 def _run_version_query(cmd, version_line=None, **kwargs) -> t.Optional[str]:
     if len(cmd) > 1:
+        shell_required = False
         try:
-            result = subprocess.run(cmd, timeout=5, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs)
+            result, error = subprocess.Popen(cmd, universal_newlines=True, shell=shell_required,
+                                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
         except(subprocess.TimeoutExpired, subprocess.CalledProcessError):
             return None
         except FileNotFoundError:
@@ -63,9 +65,7 @@ def _run_version_query(cmd, version_line=None, **kwargs) -> t.Optional[str]:
         version_raw = result.stdout.decode()
         if not version_raw:
             version_raw = result.stderr.decode()
-    else:
-        version_raw, error = subprocess.Popen(cmd, universal_newlines=True, shell=True,
-                                              stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+    # The tool only has a single string command -> it needs to be communicated with shell=True
     try:
         if version_line:
             version = version_raw.splitlines()[version_line]
@@ -78,15 +78,17 @@ def _run_version_query(cmd, version_line=None, **kwargs) -> t.Optional[str]:
 
 def query_software():
     """Get information about relevant software."""
+    no_path_exceptions = ['mkl']
     software_info = {}
     for program, version_tuple in VERSION_QUERY_FLAGS.items():
         path = shutil.which(program)
-        if path is None and program is not 'mkl':
+        if path is None and program not in no_path_exceptions:
             continue
         if version_tuple[0] is None:
             version_flag = DEFAULT_VERSION_QUERY_FLAG
         else:
             version_flag = version_tuple[0]
+        # The package cannot be found -> It must be one of the exceptions
         if not path:
             cmd = [version_flag]
         else:
@@ -130,7 +132,7 @@ def print_software_info(software_info: dict):
         try:
             package_version = version['version'].split('==')[1]
         except IndexError:
-            package_version =version['version'] 
+            package_version =version['version']
         table.add_row(package, package_version)
 
     console.print(table)
