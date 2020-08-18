@@ -63,7 +63,11 @@ def _run_version_query(cmd, version_line=None) -> t.Optional[str]:
         return None
     version_raw = result
     if error and not version_raw:
-        version_raw = error if 'Traceback' not in error else 'NA'
+        if 'Traceback' in error or 'Check the permissions and owner of that directory.' in error:
+            version_raw, error = None, None
+        else:
+            # When automatically written to stderr -> e.g. java -version writes to stderr
+            version_raw = error
     if not error and not version_raw:
         return None
     try:
