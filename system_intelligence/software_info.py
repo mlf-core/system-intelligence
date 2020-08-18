@@ -38,7 +38,7 @@ VERSION_QUERY_FLAGS = {
     'pip': (None, None),
     # other
     'nvcc': (None, 3),  # CUDA
-    'java': (None, None),
+    'java': ('-version', None),
     'ruby': (None, None),
     'mpirun': (None, None),
     'spack': (None, None)
@@ -80,6 +80,8 @@ def query_software():
             continue
         if version_tuple[0] is None:
             version_flag = DEFAULT_VERSION_QUERY_FLAG
+        else:
+            version_flag = version_tuple[0]
         cmd = [program, version_flag]
         _LOG.debug(f'running "{cmd}"')
         version = _run_version_query(cmd, version_tuple[1])
