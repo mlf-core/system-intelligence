@@ -52,8 +52,8 @@ PYTHON_PACKAGES = [
 ]
 
 
-def _run_version_query(cmd, version_line=None, **kwargs) -> t.Optional[str]:
-    shell_required = True if len(cmd) < 2 else False
+def _run_version_query(cmd, version_line=None) -> t.Optional[str]:
+    shell_required = True if len(cmd) < 2 or isinstance(cmd, str) else False
     try:
         result, error = subprocess.Popen(cmd, universal_newlines=True, shell=shell_required,
                                          stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
@@ -62,9 +62,10 @@ def _run_version_query(cmd, version_line=None, **kwargs) -> t.Optional[str]:
     except FileNotFoundError:
         return None
     version_raw = result
-    if not version_raw:
-        version_raw = error 
-    # The tool only has a single string command -> it needs to be communicated with shell=True
+    if error and not version_raw:
+        version_raw = error if 'Traceback' not in error else 'NA'
+    if not error and not version_raw:
+        return None
     try:
         if version_line:
             version = version_raw.splitlines()[version_line]
@@ -99,8 +100,7 @@ def query_software():
     # python packages
     py_packages = {}
     for package in PYTHON_PACKAGES:
-        version = _run_version_query(
-            f'python -m pip freeze | grep {package}', shell=True)
+        version = _run_version_query(f'python -m pip freeze | grep {package}')
         if version is None:
             continue
         py_packages[package] = {'version': version}
