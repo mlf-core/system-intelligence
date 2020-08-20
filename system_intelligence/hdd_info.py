@@ -4,9 +4,9 @@ import itertools
 import os
 import typing as t
 
-import click
 import psutil
 from rich.console import Console
+from rich import print
 
 from .util.rich_util import create_styled_table
 from .util.unit_conversion_util import bytes_to_hreadable_string
@@ -19,7 +19,7 @@ try:
     pyudev.Context()
 except ImportError:
     pyudev = None
-    click.echo(click.style('Unable to import package pyudev. HDD information may be limited.', fg='yellow'))
+    print('[bold yellow]Unable to import package pyudev. HDD information may be limited.')
 
 HDD = pyudev is not None
 
