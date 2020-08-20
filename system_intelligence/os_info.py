@@ -2,7 +2,7 @@
 
 import platform
 
-import click
+from rich import print
 
 
 def query_os():
@@ -14,4 +14,4 @@ def query_os():
 
 
 def print_os_info(system):
-    click.echo(click.style(system, fg='blue'))
+    print(f'[bold blue]{system}')

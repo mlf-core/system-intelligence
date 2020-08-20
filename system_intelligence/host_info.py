@@ -2,7 +2,7 @@
 
 import platform
 
-import click
+from rich import print
 
 
 def query_host() -> str:
@@ -13,4 +13,4 @@ def query_host() -> str:
 
 
 def print_host_info(hostname):
-    click.echo(click.style(f'Hostname: {hostname}', fg='blue'))
+    print(f'[bold blue]Hostname: {hostname}')

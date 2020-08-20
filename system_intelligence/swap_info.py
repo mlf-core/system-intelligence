@@ -2,8 +2,9 @@
 
 import typing as t
 
-import click
 import psutil
+
+from rich import print
 
 try:
     import pyudev
@@ -11,7 +12,7 @@ try:
     pyudev.Context()
 except ImportError:
     pyudev = None
-    click.echo(click.style('Unable to import package pyudev. HDD information may be limited.', fg='yellow'))
+    print('[bold yellow]Unable to import package pyudev. HDD information may be limited.')
 
 SWAP = psutil is not None
 
@@ -26,4 +27,4 @@ def query_swap() -> t.Optional[int]:
 
 
 def print_swap_info(swap: int) -> None:
-    click.echo(click.style(f'Swap size: {str(swap)}', fg='blue'))
+    print(f'[bold blue]Swap size: {str(swap)}')

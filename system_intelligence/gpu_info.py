@@ -2,12 +2,16 @@
 
 import typing as t
 
-import click
 from rich.console import Console
+from rich import print
 
-from .errors import QueryError
 from .util.rich_util import create_styled_table
 from .util.unit_conversion_util import bytes_to_hreadable_string, hz_to_hreadable_string
+
+
+class QueryError(RuntimeError):
+    """Indicate that a query failed."""
+
 
 compute_capability_to_architecture = {
     2: 'Fermi',
@@ -30,7 +34,7 @@ except (ModuleNotFoundError, ImportError):
 def query_gpus(**_) -> t.List[t.Mapping[str, t.Any]]:
     """Get information about all GPUs."""
     if not is_CUDA_available:
-        click.echo(click.style('Unable to import package pycuda. GPU information may be limited.', fg='yellow'))
+        print('[bold yellow]Unable to import package pycuda. GPU information may be limited.')
         return []
 
     gpus = []

@@ -6,9 +6,9 @@ import subprocess
 import typing as t
 from xml.etree import ElementTree as ET
 
-import click
 import psutil
 from rich.console import Console
+from rich import print
 
 from .util.process_util import is_process_accessible
 from .util.rich_util import create_styled_table
@@ -22,7 +22,7 @@ try:
     pyudev.Context()
 except ImportError:
     pyudev = None
-    click.echo(click.style('Unable to import package pyudev. HDD information may be limited.', fg='yellow'))
+    print('[bold yellow]Unable to import package pyudev. HDD information may be limited.')
 
 RAM_TOTAL = psutil is not None
 
@@ -52,10 +52,10 @@ def query_ram_banks_cache(sudo: bool = False, **_) \
         -> t.Tuple[t.List[t.Mapping[str, t.Any]], t.List[t.Mapping[str, t.Any]]]:
     """Extract information about RAM dice installed in the system."""
     if os.geteuid() != 0:
-        click.echo(click.style('Run system-intelligence with administrative permissions to enable more verbose'
-                               ' (bank and cache) RAM output!', fg='green'))
+        print('[bold green]Run system-intelligence with administrative permissions' +
+              ' to enable more verbose (bank and cache) RAM output!')
     if not is_process_accessible(['lshw']):
-        click.echo(click.style('lshw is not installed! Unable to fetch detailed RAM information.', fg='yellow'))
+        print('[bold yellow]lshw is not installed! Unable to fetch detailed RAM information.')
     try:
         xml_root = parse_lshw(sudo=sudo)
     except subprocess.TimeoutExpired:
@@ -83,7 +83,7 @@ def query_ram_banks_cache(sudo: bool = False, **_) \
             ram_cache.append(query_ram_cache(node))
 
     if not RAM_accessible:
-        click.echo(click.style('Unable to fetch detailed RAM information. RAM is not accessible', fg='yellow'))
+        print('[bold yellow]Unable to fetch detailed RAM information. RAM is not accessible.')
 
     return ram_banks, ram_cache
 
@@ -122,8 +122,8 @@ def query_ram_bank(node: ET.Element) -> t.Tuple[t.Mapping[str, t.Any], bool]:
     bank_size = node.findall('./size')
     bank_clock = node.findall('./clock')
     # if len(bank_size) != 1 or len(bank_clock) != 1:
-    #     click.echo(click.style(f'there should be exactly one size and clock value for a bank but there are'
-    #                            f' {len(bank_size)} and {len(bank_clock)} respectively', fg='yellow'))
+    #     print(f'[bold yellow]there should be exactly one size and clock value for a bank but there are'
+    #                            f' {len(bank_size)} and {len(bank_clock)} respectively')
     ram_bank['memory'] = bank_size[0].text
     try:
         if bank_clock[0].text is not None:
