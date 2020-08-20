@@ -3,6 +3,7 @@ import sys
 import click
 
 from rich.traceback import install
+from rich import print
 from system_intelligence.query import query_and_export
 
 
@@ -25,14 +26,14 @@ def main(scope, verbose, output_format, generate_html_table, output):
 
     'all', 'cpu', 'gpus', 'ram', 'host', 'os', 'hdd', 'swap', 'network', 'software'
     """
-    click.echo(click.style(r"""
+    print(r"""[bold blue]
                    _                       _       _       _ _ _
      ___ _   _ ___| |_ ___ _ __ ___       (_)_ __ | |_ ___| | (_) __ _  ___ _ __   ___ ___
     / __| | | / __| __/ _ \ '_ ` _ \ _____| | '_ \| __/ _ \ | | |/ _` |/ _ \ '_ \ / __/ _ \
     \__ \ |_| \__ \ ||  __/ | | | | |_____| | | | | ||  __/ | | | (_| |  __/ | | | (_|  __/
     |___/\__, |___/\__\___|_| |_| |_|     |_|_| |_|\__\___|_|_|_|\__, |\___|_| |_|\___\___|
           |___/                                                   |___/
-    """, fg='blue'))
+    """)
 
     if not verbose and not output:
         click.echo(click.style('Please specify an output path or run'
@@ -40,9 +41,7 @@ def main(scope, verbose, output_format, generate_html_table, output):
         sys.exit(1)
 
     if not scope:
-        click.echo(click.style('Please choose a scope! Run ', fg='red')
-                   + click.style('system-intelligence scope --help ', fg='green')
-                   + click.style('for more information.', fg='red'))
+        print('[bold red]Please choose a scope! Run [green]system-intelligence scope --help [red]for more information.')
         sys.exit(1)
 
     if not output and generate_html_table:
