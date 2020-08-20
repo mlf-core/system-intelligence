@@ -10,6 +10,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Added**
 
+* Richified all prints
+
 **Fixed**
 
 **Dependencies**
