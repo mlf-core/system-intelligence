@@ -1,7 +1,7 @@
 click==7.1.2
 rich==8.0.0
 pint==0.16.1
-psutil==5.7.2
+psutil==5.7.3
 py-cpuinfo==7.0.0
 pyudev==0.22.0
 ruamel.yaml==0.16.12
