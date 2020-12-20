@@ -36,8 +36,7 @@ def main(scope, verbose, output_format, generate_html_table, output):
     """)
 
     if not verbose and not output:
-        click.echo(click.style('Please specify an output path or run'
-                               ' system-intelligence without the silent option!', fg='yellow'))
+        print('[bold yellow]Please specify an output path or run system-intelligence without the silent option!')
         sys.exit(1)
 
     if not scope:
@@ -45,8 +44,7 @@ def main(scope, verbose, output_format, generate_html_table, output):
         sys.exit(1)
 
     if not output and generate_html_table:
-        click.echo(click.style(
-            'Specified --generate_output_table without --output. Will not create a html table.', fg='yellow'))
+        print('[bold yellow]Specified --generate_output_table without --output. Will not create a html table.')
 
     query_and_export(query_scope=list(scope),
                      verbose=verbose,

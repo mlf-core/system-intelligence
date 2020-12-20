@@ -3,7 +3,7 @@
 import collections.abc
 import unittest
 
-from system_intelligence.gpu_info import query_gpus
+from system_intelligence.gpus_info import query_gpus
 
 
 class Tests(unittest.TestCase):

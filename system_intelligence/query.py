@@ -7,17 +7,6 @@ import importlib
 from ruamel.yaml import YAML
 from json2html import *  # noqa F403
 
-from .cpu_info import query_cpu, print_cpu_info  # noqa F401
-from .gpu_info import query_gpus, print_gpus_info  # noqa F401
-from .hdd_info import HddInfo # noqa F401
-# from .hdd_info import print_hdd_info, query_hdd  # noqa F401
-from .host_info import query_host, print_host_info  # noqa F401
-from .network_info import query_network, print_network_info  # noqa F401
-from .os_info import query_os, print_os_info  # noqa F401
-from .ram_info import query_ram, print_ram_info  # noqa F401
-from .software_info import query_software, print_software_info  # noqa F401
-from .swap_info import query_swap, print_swap_info  # noqa F401
-
 
 def query_and_export(query_scope: list,
                      verbose: bool,

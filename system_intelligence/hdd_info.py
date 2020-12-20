@@ -26,13 +26,18 @@ class HddInfo(BaseInfo):
         self.IGNORED_DEVICE_PATHS = {'/dm', '/loop', '/md'}
 
     def query_hdd(self):
+        """
+        Bla
+        """
         hdd_models = self.query_hdd_model()
-        hdd_usage = self.query_hdd_usage()
+        hdd_usage = HddInfo.query_hdd_usage()
 
         return {'model': hdd_models, 'usage': hdd_usage}
 
     def query_hdd_model(self) -> t.Dict[str, dict]:
-        """Get information about all hard drives."""
+        """
+        Get information about all hard drives.
+        """
         if not self.HDD:
             return {}
         context = pyudev.Context()
@@ -51,7 +56,11 @@ class HddInfo(BaseInfo):
 
         return hdds
 
-    def query_hdd_usage(self) -> t.Dict[t.Any, t.Dict[str, str]]:
+    @staticmethod
+    def query_hdd_usage() -> t.Dict[t.Any, t.Dict[str, str]]:
+        """
+        Bla
+        """
         hdd_to_usage = {}
         for part in psutil.disk_partitions(all=False):
             if os.name == 'nt':
@@ -70,6 +79,9 @@ class HddInfo(BaseInfo):
         return hdd_to_usage
 
     def print_hdd_info(self, hdd_info: dict) -> None:
+        """
+        Bla
+        """
         # Models
         self.init_table(title='Hard Disks Drives', column_names=['Disk Name', 'Model'])
 
