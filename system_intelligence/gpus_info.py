@@ -47,7 +47,7 @@ class GpusInfo(BaseInfo):
         gpus = []
         for i in range(cuda.Device.count()):
             device = cuda.Device(i)
-            gpus.append(GpuInfo.query_gpu(device))
+            gpus.append(GpusInfo.query_gpu(device))
 
         return gpus
 
@@ -59,7 +59,7 @@ class GpusInfo(BaseInfo):
         attributes = device.get_attributes()
         compute_capability = device.compute_capability()
         multiprocessors = attributes[cuda.device_attribute.MULTIPROCESSOR_COUNT]
-        cuda_cores = GpuInfo.calculate_cuda_cores(compute_capability, multiprocessors)
+        cuda_cores = GpusInfo.calculate_cuda_cores(compute_capability, multiprocessors)
         try:
             return {
                 'architecture': compute_capability_to_architecture[compute_capability[0]],
