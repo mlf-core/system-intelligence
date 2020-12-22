@@ -5,6 +5,7 @@ import typing as t
 from xml.etree import ElementTree as ET
 import psutil
 from rich import print
+from sys import platform
 
 from .base_info import BaseInfo
 from .util.process_util import is_process_accessible
@@ -14,7 +15,6 @@ _LOG = logging.getLogger(__name__)
 
 try:
     import pyudev
-
     pyudev.Context()
 except ImportError:
     pyudev = None
@@ -29,18 +29,24 @@ class RamInfo(BaseInfo):
     def __init__(self):
         super().__init__()
         self.RAM_TOTAL = psutil is not None
+        self.OS = platform
 
     def query_ram(self, sudo: bool = False, **kwargs) -> t.Mapping[str, t.Any]:
         """
         Get all available information about RAM.
         """
         total_ram = self.query_ram_total()
-        ram_banks, ram_cache = self.query_ram_banks_cache(sudo=sudo, **kwargs)
-        ram: t.Dict[str, t.Any] = {'total': total_ram, 'banks': {}, 'cache': {}}
-        if ram_banks:
-            ram['banks'] = ram_banks
-        if ram_cache:
-            ram['cache'] = ram_cache
+        ram:t.Dict[str, t.Any] = {'total': total_ram, 'banks': {}}
+
+        if self.OS == 'darwin':
+            self.query_ram_macos(ram)
+        else:
+            ram_banks, ram_cache = self.query_ram_banks_cache(sudo=sudo, **kwargs)
+            ram['cache'] = {}
+            if ram_banks:
+                ram['banks'] = ram_banks
+            if ram_cache:
+                ram['cache'] = ram_cache
 
         return ram
 
@@ -52,6 +58,24 @@ class RamInfo(BaseInfo):
             return None
 
         return psutil.virtual_memory().total
+
+    def query_ram_macos(self, ram: t.Dict[str, t.Any]) -> t.Dict[str, t.Any]:
+        """
+        Query RAM info on MacOS
+        """
+        cmd = (['system_profiler','SPMemoryDataType'])
+        ram_info = subprocess.check_output(cmd).decode('utf-8')
+        # split the BANKs (like "slots") into different items
+        ram_banks = [e.strip() for e in ram_info.split('BANK') if e][1:]
+
+        # for each RAM slot, extract details
+        for i in range(0, len(ram_banks)):
+            ram_slot_details = [e.strip() for e in ram_banks[i].split('\n') if e]
+            ram_slot_details_set = {el.split(':')[0].strip(): el.split(':')[1].strip() for el in ram_slot_details}
+            ram['banks']['BANK ' + ram_slot_details[0]] = {k:v for k,v in ram_slot_details_set.items() if k in
+                                                           {'Size', 'Type', 'Speed', 'Serial Number'}}
+        return ram
+
 
     def query_ram_banks_cache(self, sudo: bool = False, **_) \
         -> t.Tuple[t.List[t.Mapping[str, t.Any]], t.List[t.Mapping[str, t.Any]]]:
@@ -130,9 +154,6 @@ class RamInfo(BaseInfo):
 
         bank_size = node.findall('./size')
         bank_clock = node.findall('./clock')
-        # if len(bank_size) != 1 or len(bank_clock) != 1:
-        #     print(f'[bold yellow]there should be exactly one size and clock value for a bank but there are'
-        #                            f' {len(bank_size)} and {len(bank_clock)} respectively')
         ram_bank['memory'] = bank_size[0].text
         try:
             if bank_clock[0].text is not None:
@@ -158,15 +179,25 @@ class RamInfo(BaseInfo):
 
     def print_ram_info(self, ram_info: dict):
         """
-        Bla
+        Print all available RAM info for the users operating system
         """
-        # Not run with sudo -> only total memory accessible
-        if os.geteuid() != 0:
-            self.init_table(title='Random Access Memory', column_names=['Total Memory'])
-
-            self.table.add_row(f'{bytes_to_hreadable_string(ram_info["total"])}')
-
+        # print all infos on RAM available on MacOS
+        if self.OS == 'darwin':
+            column_names = ['Slot', 'Type', 'Size', 'Speed', 'Serial Number']
+            self.init_table(title='Random Access Memory Banks', column_names=column_names)
+            for ram_bank_id in ram_info['banks']:
+                details = ram_info['banks'][ram_bank_id]
+                self.table.add_row(ram_bank_id,
+                                   details['Type'],
+                                   details['Size'],
+                                   details['Speed'],
+                                   details['Serial Number'])
             self.print_table()
+            self.print_total_memory(ram_info["total"])
+
+        # Not run with sudo -> only total memory accessible (on Linux)
+        elif os.geteuid() != 0:
+            print(self.print_total_memory(ram_info["total"]))
         else:
             column_names = ['Product', 'Serial', 'Vendor', 'Description', 'Slot', 'Memory / Memory Total', 'Clock']
             self.init_table(title='Random Access Memory Banks', column_names=column_names)
@@ -188,3 +219,11 @@ class RamInfo(BaseInfo):
                 self.table.add_row(cache['slot'], cache['physid'], bytes_to_hreadable_string(cache['capacity']))
 
             self.print_table()
+
+    def print_total_memory(self, ram_info_total: str) -> None:
+        """
+        Print the total memory table
+        """
+        self.init_table(title='Random Access Memory', column_names=['Total Memory'])
+        self.table.add_row(f'{bytes_to_hreadable_string(ram_info_total)}')
+        self.print_table()

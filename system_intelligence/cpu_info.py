@@ -5,8 +5,6 @@ import typing as t
 from rich import print
 
 from .base_info import BaseInfo
-from .util.unit_conversion_util import hz_to_hreadable_string
-from .util.process_util import is_process_accessible
 
 _LOG = logging.getLogger(__name__)
 
@@ -35,7 +33,7 @@ except ImportError:
 
 class CpuInfo(BaseInfo):
     """
-    Bla
+    Info class to collect info about the CPU on the users operating system
     """
 
     def __init__(self):
@@ -95,7 +93,6 @@ class CpuInfo(BaseInfo):
     def _get_cache_size(self, level: int, cpuinfo_data: dict) -> t.Optional[str]:
         """
         Get CPU cache size in bytes at a given level.
-        If no units are provided, assume source data is in KiB.
         """
         # L2 cache on MacOS is already included in cpuinfo data (required for L1 and L3)
         # L1i and L1d cache are summed up into one value for L1 cache
@@ -103,36 +100,35 @@ class CpuInfo(BaseInfo):
         if self.OS == 'darwin' and level != 2:
             cmd = (['sysctl', 'hw'])
             result = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            res = subprocess.check_output(('grep', f'l{level}'), stdin=result.stdout).decode('utf-8')
-            for e in res.split('\n'):
-                if e:
-                    s = e.split(':')
-                    cache_size += int(s[1])
-
+            hw_cache_level = subprocess.check_output(('grep', f'l{level}'), stdin=result.stdout).decode('utf-8')
+            # for each cache level part (basically only relevant for L1) get the total cache size
+            for cache_level_part in hw_cache_level.split('\n')[:-1]:
+                split_cache_parts = cache_level_part.split(':')
+                cache_size += int(split_cache_parts[1])
         else:
             cache_size = cpuinfo_data.get(f'l{level}_data_cache_size', cpuinfo_data.get(f'l{level}_cache_size', None))
-
-        return self.format_bytes(cache_size)
+        # return cache size in nicely formatted bytes unit
+        return CpuInfo.format_bytes(cache_size)
 
 
 
     def _get_cache_sizes(self, cpuinfo_data: dict) -> t.Mapping[int, t.Optional[int]]:
         """
-        Bla
+        For each Cache Level (L1, L2 and L3) get the actual cache size
         """
         return {lvl: CpuInfo._get_cache_size(self, lvl, cpuinfo_data) for lvl in range(1, 4)}
 
-    def format_bytes(self, size: int):
+    @staticmethod
+    def format_bytes(size: int):
         """
         Format an integer representing a byte value into a nicer format.
-        TODO: Check, whether cache sizes could exceed the MB limit (so add GB or even TB?)
         Examples:
             1234 = 1KB
             123456 = 1MB
         """
         power = 2 ** 10
         n = 0
-        power_labels = {0: '', 1: 'K', 2: 'M'}
+        power_labels = {0: '', 1: 'K', 2: 'M', 3: 'G'}
         while size > power:
             size /= power
             n += 1
@@ -140,7 +136,7 @@ class CpuInfo(BaseInfo):
 
     def print_cpu_info(self, cpu_info: dict) -> None:
         """
-        Bla
+        Print all Infos available for CPUs for the users operating system
         """
         # Prettify cache
         cpu_info['cache'] = cpu_info['cache'].replace('{', '').replace('}', '')
