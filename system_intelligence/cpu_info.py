@@ -56,7 +56,7 @@ class CpuInfo(BaseInfo):
         logical_cores, physical_cores = self.query_cpu_cores()
         cache = dict(self._get_cache_sizes(cpu))
         for level, hz in cache.items():
-            cache[level] = hz_to_hreadable_string(hz)
+            cache[level] = hz
 
         return {
             'vendor_id_raw': cpu.get('vendor_id_raw'),
@@ -68,7 +68,7 @@ class CpuInfo(BaseInfo):
             'clock': f'{str(clock_current)} MHz',
             'clock_min': f'{str(clock_min)} MHz',
             'clock_max': f'{str(clock_max)} MHz',
-            'cache': str(cache)}
+            'cache': '\n'.join(f'L{cache_level}: {size}' for cache_level, size in cache.items())}
 
     def query_cpu_clock(self) -> t.Tuple[t.Optional[int], t.Optional[int], t.Optional[int]]:
         """
@@ -92,42 +92,51 @@ class CpuInfo(BaseInfo):
             return None, None
         return psutil.cpu_count(), psutil.cpu_count(logical=False)
 
-    def _get_cache_size(self, level: int, cpuinfo_data: dict) -> t.Optional[int]:
+    def _get_cache_size(self, level: int, cpuinfo_data: dict) -> t.Optional[str]:
         """
         Get CPU cache size in bytes at a given level.
         If no units are provided, assume source data is in KiB.
         """
+        # L2 cache on MacOS is already included in cpuinfo data (required for L1 and L3)
+        # L1i and L1d cache are summed up into one value for L1 cache
+        cache_size = 0
         if self.OS == 'darwin' and level != 2:
             cmd = (['sysctl', 'hw'])
             result = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             res = subprocess.check_output(('grep', f'l{level}'), stdin=result.stdout).decode('utf-8')
-            print(res)
+            for e in res.split('\n'):
+                if e:
+                    s = e.split(':')
+                    cache_size += int(s[1])
 
         else:
-            raw_value = str(cpuinfo_data.get(f'l{level}_data_cache_size', cpuinfo_data.get(f'l{level}_cache_size', None)))
+            cache_size = cpuinfo_data.get(f'l{level}_data_cache_size', cpuinfo_data.get(f'l{level}_cache_size', None))
 
-        if raw_value is None:
-            return None
-        # KB, MB: "this practice frequently leads to confusion and is deprecated"
-        # see https://en.wikipedia.org/wiki/JEDEC_memory_standards
-        if raw_value.endswith('KB'):
-            raw_value = raw_value[:-2] + 'KiB'
-        elif raw_value.endswith('MB'):
-            raw_value = raw_value[:-2] + 'MiB'
-        ureg = pint.UnitRegistry()
-        value = ureg(raw_value)
-        if isinstance(value, int):
-            return value * 1024
-        print(f'L{level} cache size parsed by pint: {raw_value} -> {value}')
-        value = value.to('bytes')
-        return int(value.magnitude)
+        return self.format_bytes(cache_size)
 
-  
+
+
     def _get_cache_sizes(self, cpuinfo_data: dict) -> t.Mapping[int, t.Optional[int]]:
         """
         Bla
         """
         return {lvl: CpuInfo._get_cache_size(self, lvl, cpuinfo_data) for lvl in range(1, 4)}
+
+    def format_bytes(self, size: int):
+        """
+        Format an integer representing a byte value into a nicer format.
+        TODO: Check, whether cache sizes could exceed the MB limit (so add GB or even TB?)
+        Examples:
+            1234 = 1KB
+            123456 = 1MB
+        """
+        power = 2 ** 10
+        n = 0
+        power_labels = {0: '', 1: 'K', 2: 'M'}
+        while size > power:
+            size /= power
+            n += 1
+        return f'{int(size)} {power_labels[n]}B'
 
     def print_cpu_info(self, cpu_info: dict) -> None:
         """
