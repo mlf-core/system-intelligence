@@ -98,13 +98,10 @@ class CpuInfo(BaseInfo):
         If no units are provided, assume source data is in KiB.
         """
         if self.OS == 'darwin' and level != 2:
-            if not is_process_accessible(['sysctl']):
-                print('[bold yellow]sysctl command is not accessible! Unable to fetch detailed L1, L3 cache size information.')
-            else:
-                cmd = (['sysctl', 'hw', '|', 'grep', f'l{level}'])
-                result = subprocess.run(cmd, timeout=5, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                print(result)
-                print(dict(result))
+            cmd = (['sysctl', 'hw'])
+            result = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            res = subprocess.check_output(('grep', f'l{level}'), stdin=result.stdout).decode('utf-8')
+            print(res)
 
         else:
             raw_value = str(cpuinfo_data.get(f'l{level}_data_cache_size', cpuinfo_data.get(f'l{level}_cache_size', None)))
@@ -125,12 +122,12 @@ class CpuInfo(BaseInfo):
         value = value.to('bytes')
         return int(value.magnitude)
 
-    @staticmethod
-    def _get_cache_sizes(cpuinfo_data: dict) -> t.Mapping[int, t.Optional[int]]:
+  
+    def _get_cache_sizes(self, cpuinfo_data: dict) -> t.Mapping[int, t.Optional[int]]:
         """
         Bla
         """
-        return {lvl: CpuInfo._get_cache_size(lvl, cpuinfo_data) for lvl in range(1, 4)}
+        return {lvl: CpuInfo._get_cache_size(self, lvl, cpuinfo_data) for lvl in range(1, 4)}
 
     def print_cpu_info(self, cpu_info: dict) -> None:
         """
