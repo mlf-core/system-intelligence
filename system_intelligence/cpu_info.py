@@ -1,6 +1,5 @@
 import logging
 import subprocess
-from sys import platform
 import typing as t
 from rich import print
 
@@ -108,7 +107,6 @@ class CpuInfo(BaseInfo):
             cache_size = cpuinfo_data.get(f'l{level}_data_cache_size', cpuinfo_data.get(f'l{level}_cache_size', None))
         # return cache size in nicely formatted bytes unit
         return CpuInfo.format_bytes(cache_size)
-
 
     def _get_cache_sizes(self, cpuinfo_data: dict) -> t.Mapping[int, t.Optional[int]]:
         """

@@ -22,7 +22,9 @@ def query_and_export(query_scope: list,
 
 
 def query(query_scope: list, verbose: bool, **kwargs) -> t.Any:
-    """Wrap around selected system query functions."""
+    """
+    Wrap around selected system query functions.
+    """
     info = {'cpu': {},
             'gpus': {},
             'ram': {},
@@ -47,7 +49,9 @@ def query(query_scope: list, verbose: bool, **kwargs) -> t.Any:
 
 
 def export(info, export_format: str, generate_html_table: bool, export_target: t.Any):
-    """Export information obtained by system query to a specified format."""
+    """
+    Export information obtained by system query to a specified format.
+    """
     if export_format == 'json':
         with open(str(export_target), 'w', encoding='utf-8') as json_file:
             json.dump(info, json_file, indent=2, ensure_ascii=False)
@@ -61,8 +65,8 @@ def export(info, export_format: str, generate_html_table: bool, export_target: t
         raise NotImplementedError(f'format={export_format} target={export_target}')
     # write HTML Table
     if generate_html_table:
-        html_output_name = f'{str(export_target).split(".")[0]}.html'
-        with open(str(html_output_name), 'w', encoding='utf-8') as html_file:
+        html_output_name = f'{export_target}.html' if not str(export_target).endswith('.html') else export_target
+        with open(html_output_name, 'w', encoding='utf-8') as html_file:
             json_formatted = json.dumps(info, indent=2, ensure_ascii=False)
             html_table = json2html.convert(json=json_formatted,  # noqa F405
                                            table_attributes="id=\"system-intelligence\""

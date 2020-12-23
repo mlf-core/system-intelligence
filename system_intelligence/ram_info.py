@@ -5,7 +5,6 @@ import typing as t
 from xml.etree import ElementTree as ET
 import psutil
 from rich import print
-from sys import platform
 
 from .base_info import BaseInfo
 from .util.process_util import is_process_accessible
@@ -34,7 +33,7 @@ class RamInfo(BaseInfo):
         Get all available information about RAM.
         """
         total_ram = self.query_ram_total()
-        ram:t.Dict[str, t.Any] = {'total' : total_ram, 'banks' : {}}
+        ram: t.Dict[str, t.Any] = {'total': total_ram, 'banks': {}}
 
         if self.OS == 'darwin':
             self.query_ram_macos(ram)

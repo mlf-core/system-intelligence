@@ -3,7 +3,6 @@ import os
 import typing as t
 import psutil
 from rich import print
-from sys import platform
 
 from .base_info import BaseInfo
 from .util.unit_conversion_util import bytes_to_hreadable_string
@@ -25,7 +24,6 @@ class HddInfo(BaseInfo):
             print('[bold yellow]Unable to import package pyudev. HDD information may be limited.')
         self.HDD = pyudev is not None
 
-
     def query_hdd(self):
         """
         Bla
@@ -41,7 +39,7 @@ class HddInfo(BaseInfo):
         """
         if not self.HDD:
             return {}
-        context = pyudev.Context()
+        context = pyudev.Context() # noqa: F821
         hdds = {}
         for device in context.list_devices(subsystem='block', DEVTYPE='disk'):
             if any(_ in device.device_path for _ in self.IGNORED_DEVICE_PATHS):
