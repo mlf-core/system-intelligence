@@ -3,16 +3,10 @@ import os
 import typing as t
 import psutil
 from rich import print
+from sys import platform
 
 from .base_info import BaseInfo
 from .util.unit_conversion_util import bytes_to_hreadable_string
-try:
-    import pyudev
-
-    pyudev.Context()
-except ImportError:
-    pyudev = None
-    print('[bold yellow]Unable to import package pyudev. HDD information may be limited.')
 
 
 class HddInfo(BaseInfo):
@@ -22,8 +16,15 @@ class HddInfo(BaseInfo):
 
     def __init__(self):
         super().__init__()
-        self.HDD = pyudev is not None
         self.IGNORED_DEVICE_PATHS = {'/dm', '/loop', '/md'}
+        if self.OS == 'linux':
+            import pyudev
+            pyudev.Context()
+        else:
+            pyudev = None
+            print('[bold yellow]Unable to import package pyudev. HDD information may be limited.')
+        self.HDD = pyudev is not None
+
 
     def query_hdd(self):
         """

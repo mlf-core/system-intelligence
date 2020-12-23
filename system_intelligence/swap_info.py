@@ -6,14 +6,6 @@ from rich import print
 
 from .base_info import BaseInfo
 
-try:
-    import pyudev
-
-    pyudev.Context()
-except ImportError:
-    pyudev = None
-    print('[bold yellow]Unable to import package pyudev. HDD information may be limited.')
-
 
 class SwapInfo(BaseInfo):
     """

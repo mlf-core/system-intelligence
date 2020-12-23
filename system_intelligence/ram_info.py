@@ -13,13 +13,6 @@ from .util.unit_conversion_util import bytes_to_hreadable_string, hz_to_hreadabl
 
 _LOG = logging.getLogger(__name__)
 
-try:
-    import pyudev
-    pyudev.Context()
-except ImportError:
-    pyudev = None
-    print('[bold yellow]Unable to import package pyudev. RAM information may be limited.')
-
 
 class RamInfo(BaseInfo):
     """
@@ -29,14 +22,19 @@ class RamInfo(BaseInfo):
     def __init__(self):
         super().__init__()
         self.RAM_TOTAL = psutil is not None
-        self.OS = platform
+        # the pyudev package is only available for linux, so just import if the current OS is linux
+        if self.OS == 'linux':
+            import pyudev
+            pyudev.Context()
+        else:
+            print('[bold yellow]Unable to import package pyudev. RAM information may be limited.')
 
     def query_ram(self, sudo: bool = False, **kwargs) -> t.Mapping[str, t.Any]:
         """
         Get all available information about RAM.
         """
         total_ram = self.query_ram_total()
-        ram:t.Dict[str, t.Any] = {'total': total_ram, 'banks': {}}
+        ram:t.Dict[str, t.Any] = {'total' : total_ram, 'banks' : {}}
 
         if self.OS == 'darwin':
             self.query_ram_macos(ram)
@@ -63,7 +61,7 @@ class RamInfo(BaseInfo):
         """
         Query RAM info on MacOS
         """
-        cmd = (['system_profiler','SPMemoryDataType'])
+        cmd = (['system_profiler', 'SPMemoryDataType'])
         ram_info = subprocess.check_output(cmd).decode('utf-8')
         # split the BANKs (like "slots") into different items
         ram_banks = [e.strip() for e in ram_info.split('BANK') if e][1:]
@@ -72,13 +70,11 @@ class RamInfo(BaseInfo):
         for i in range(0, len(ram_banks)):
             ram_slot_details = [e.strip() for e in ram_banks[i].split('\n') if e]
             ram_slot_details_set = {el.split(':')[0].strip(): el.split(':')[1].strip() for el in ram_slot_details}
-            ram['banks']['BANK ' + ram_slot_details[0]] = {k:v for k,v in ram_slot_details_set.items() if k in
+            ram['banks']['BANK ' + ram_slot_details[0]] = {k: v for k, v in ram_slot_details_set.items() if k in
                                                            {'Size', 'Type', 'Speed', 'Serial Number'}}
         return ram
 
-
-    def query_ram_banks_cache(self, sudo: bool = False, **_) \
-        -> t.Tuple[t.List[t.Mapping[str, t.Any]], t.List[t.Mapping[str, t.Any]]]:
+    def query_ram_banks_cache(self, sudo: bool = False, **_) -> t.Tuple[t.List[t.Mapping[str, t.Any]], t.List[t.Mapping[str, t.Any]]]:
         """
         Extract information about RAM dice installed in the system.
         """

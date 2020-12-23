@@ -41,7 +41,6 @@ class CpuInfo(BaseInfo):
         self.CPU = cpuinfo is not None and pint is not None
         self.CPU_CLOCK = psutil is not None
         self.CPU_CORES = psutil is not None
-        self.OS = platform
 
     def query_cpu(self, **_) -> t.Mapping[str, t.Any]:
         """
@@ -109,7 +108,6 @@ class CpuInfo(BaseInfo):
             cache_size = cpuinfo_data.get(f'l{level}_data_cache_size', cpuinfo_data.get(f'l{level}_cache_size', None))
         # return cache size in nicely formatted bytes unit
         return CpuInfo.format_bytes(cache_size)
-
 
 
     def _get_cache_sizes(self, cpuinfo_data: dict) -> t.Mapping[int, t.Optional[int]]:

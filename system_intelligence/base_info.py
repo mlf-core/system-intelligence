@@ -2,6 +2,7 @@ from rich.box import HEAVY_HEAD
 from rich.style import Style
 from rich.table import Table
 from rich.console import Console
+from sys import platform
 
 
 class BaseInfo:
@@ -9,6 +10,7 @@ class BaseInfo:
     Bla
     """
     def __init__(self):
+        self.OS = platform
         self.table = None
         self.console = None
         self.table_title = ''
