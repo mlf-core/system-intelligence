@@ -12,7 +12,7 @@ _LOG = logging.getLogger(__name__)
 
 class SoftwareInfo(BaseInfo):
     """
-    Bla
+    Query info on software available on the users system
     """
     def __init__(self):
         super().__init__()
@@ -118,7 +118,7 @@ class SoftwareInfo(BaseInfo):
 
     def print_software_info(self, software_info: dict):
         """
-        Bla
+        Print info of some software available on the users system
         """
         self.init_table(title='Installed Software', column_names=['Name', 'Path', 'Version'])
 

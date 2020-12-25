@@ -11,6 +11,7 @@ from system_intelligence.query import query_and_export
 @click.argument('scope',
                 type=click.Choice(['all', 'cpu', 'gpus', 'ram', 'software', 'host', 'os', 'hdd', 'swap', 'network']),
                 nargs=-1)
+@click.option('-e', '--exclude', is_flag=True, help='Query all except for those who where specified in the scope.')
 @click.option('--verbose/--silent', default=True)
 @click.option('-f', '--output_format', type=click.Choice(['raw', 'json', 'yml']), default='raw',
               help='Output file format.')
@@ -18,7 +19,7 @@ from system_intelligence.query import query_and_export
               help='Specify to create a html output table. Requires output_format and output to be set.')
 @click.option('-o', '--output', type=str,
               help='Output file path.')
-def main(scope, verbose, output_format, generate_html_table, output):
+def main(scope, exclude, verbose, output_format, generate_html_table, output):
     """
     Query your system for hardware and software related information.
 
@@ -45,6 +46,12 @@ def main(scope, verbose, output_format, generate_html_table, output):
 
     if not output and generate_html_table:
         print('[bold yellow]Specified --generate_output_table without --output. Will not create a html table.')
+
+    if exclude:
+        if 'all' in set(scope):
+            print('[bold red]Cannot run scope [bold green]"all"[bold red] with exclude option!')
+            sys.exit(1)
+        scope = {'cpu', 'gpus', 'ram', 'software', 'host', 'os', 'hdd', 'swap', 'network'}.difference(set(scope))
 
     query_and_export(query_scope=list(scope),
                      verbose=verbose,

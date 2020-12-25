@@ -6,7 +6,7 @@ from.base_info import BaseInfo
 
 class HostInfo(BaseInfo):
     """
-    Bla
+    Print users hostname
     """
     def __init__(self):
         super().__init__()
@@ -21,6 +21,6 @@ class HostInfo(BaseInfo):
 
     def print_host_info(self, hostname):
         """
-        Bla
+        Print users hostname
         """
         print(f'[bold blue]Hostname: {hostname}')

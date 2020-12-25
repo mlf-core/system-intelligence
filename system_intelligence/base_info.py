@@ -7,7 +7,7 @@ from sys import platform
 
 class BaseInfo:
     """
-    Bla
+    Hold basic operations shared between all device info classes
     """
     def __init__(self):
         self.OS = platform
@@ -18,7 +18,7 @@ class BaseInfo:
 
     def init_table(self, title: str, column_names):
         """
-        Bla
+        Initialize the table; so create it and init the column names
         """
         self.create_styled_table(title)
         self.prepare_table(column_names)
@@ -32,7 +32,7 @@ class BaseInfo:
 
     def prepare_table(self, column_names):
         """
-        Bla
+        Add the specified column names to the table
         """
         self.col_names = column_names
         for name in column_names:
@@ -40,7 +40,7 @@ class BaseInfo:
 
     def print_table(self):
         """
-        Bla
+        Print the result table
         """
         self.console = Console()
         self.console.print(self.table)

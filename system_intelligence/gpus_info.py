@@ -31,7 +31,7 @@ except (ModuleNotFoundError, ImportError):
 
 class GpusInfo(BaseInfo):
     """
-    Bla
+    Query any info on GPUs available for the users system (currently only supports NVIDIA GPUs)
     """
     def __init__(self):
         super().__init__()
@@ -101,7 +101,7 @@ class GpusInfo(BaseInfo):
 
     def print_gpus_info(self, gpus_info: list):
         """
-        Bla
+        Print info on any GPUs on the users system
         """
         column_names = ['Architecture', 'Brand', 'Compute Capability', 'Memory', 'Memory Clock', 'Multiprocessors', 'Cores', 'Warp Size']
         self.init_table(title='Graphical Processing Unit', column_names=column_names)

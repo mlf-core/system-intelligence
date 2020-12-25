@@ -160,7 +160,7 @@ class RamInfo(BaseInfo):
 
     def query_ram_cache(self, node: ET.Element) -> t.Mapping[str, t.Any]:
         """
-        Bla
+        Query info on RAM cache (currently only available for linux)
         """
         ram_cache = {'slot': 'NA', 'physid': 'NA', 'capacity': 'NA'}
         cache_slot = node.findall('./slot')

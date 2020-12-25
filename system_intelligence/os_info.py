@@ -6,7 +6,7 @@ from .base_info import BaseInfo
 
 class OsInfo(BaseInfo):
     """
-    Bla
+    Print the users OS
     """
 
     def __init__(self):

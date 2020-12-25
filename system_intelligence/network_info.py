@@ -6,7 +6,7 @@ from .base_info import BaseInfo
 
 class NetworkInfo(BaseInfo):
     """
-    Bla
+    Query some network info
     """
 
     def __init__(self):
@@ -28,7 +28,7 @@ class NetworkInfo(BaseInfo):
 
     def print_network_info(self, network_info):
         """
-        Bla
+        Print the network info
         """
         self.init_table(title='Network Information', column_names=['Network Name', 'Status', 'Duplex', 'Speed', 'mtu'])
 

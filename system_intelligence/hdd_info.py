@@ -10,7 +10,7 @@ from .util.unit_conversion_util import bytes_to_hreadable_string
 
 class HddInfo(BaseInfo):
     """
-    Bla
+    Provide any available info on HDDs on the users system
     """
 
     def __init__(self):
@@ -18,7 +18,7 @@ class HddInfo(BaseInfo):
         self.IGNORED_DEVICE_PATHS = {'/dm', '/loop', '/md'}
         if self.OS == 'linux':
             import pyudev
-            pyudev.Context()
+            self.context = pyudev.Context()
         else:
             pyudev = None
             print('[bold yellow]Unable to import package pyudev. HDD information may be limited.')
@@ -26,7 +26,7 @@ class HddInfo(BaseInfo):
 
     def query_hdd(self):
         """
-        Bla
+        Query info on any available HDDs on the users system
         """
         hdd_models = self.query_hdd_model()
         hdd_usage = HddInfo.query_hdd_usage()
@@ -39,9 +39,8 @@ class HddInfo(BaseInfo):
         """
         if not self.HDD:
             return {}
-        context = pyudev.Context() # noqa: F821
         hdds = {}
-        for device in context.list_devices(subsystem='block', DEVTYPE='disk'):
+        for device in self.context.list_devices(subsystem='block', DEVTYPE='disk'):
             if any(_ in device.device_path for _ in self.IGNORED_DEVICE_PATHS):
                 continue
             hdd = {'size': device.attributes.asint('size')}
@@ -58,7 +57,7 @@ class HddInfo(BaseInfo):
     @staticmethod
     def query_hdd_usage() -> t.Dict[t.Any, t.Dict[str, str]]:
         """
-        Bla
+        Query info on any HDD usage on the users system
         """
         hdd_to_usage = {}
         for part in psutil.disk_partitions(all=False):
@@ -79,7 +78,7 @@ class HddInfo(BaseInfo):
 
     def print_hdd_info(self, hdd_info: dict) -> None:
         """
-        Bla
+        Print info on any available HDDs on the users system
         """
         # Models
         self.init_table(title='Hard Disks Drives', column_names=['Disk Name', 'Model'])

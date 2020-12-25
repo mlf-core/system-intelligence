@@ -9,7 +9,7 @@ from .base_info import BaseInfo
 
 class SwapInfo(BaseInfo):
     """
-    Bla
+    Info on swap memory
     """
     def __init__(self):
         super().__init__()
@@ -27,6 +27,6 @@ class SwapInfo(BaseInfo):
 
     def print_swap_info(self, swap: int) -> None:
         """
-        Bla
+        Print info about swap memory (total size)
         """
         print(f'[bold blue]Swap size: {str(swap)}')
