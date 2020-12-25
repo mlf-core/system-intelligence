@@ -25,7 +25,7 @@ def main(scope, exclude, verbose, output_format, generate_html_table, output):
 
     Currently supported arguments are
 
-    'all', 'cpu', 'gpus', 'ram', 'host', 'os', 'hdd', 'swap', 'network', 'software'
+    'all' or 'cpu', 'gpus', 'ram', 'host', 'os', 'hdd', 'swap', 'network', 'software'
     """
     print(r"""[bold blue]
                    _                       _       _       _ _ _
@@ -47,13 +47,14 @@ def main(scope, exclude, verbose, output_format, generate_html_table, output):
     if not output and generate_html_table:
         print('[bold yellow]Specified --generate_output_table without --output. Will not create a html table.')
 
+    scope = set(scope)
     if exclude:
-        if 'all' in set(scope):
+        if 'all' in scope:
             print('[bold red]Cannot run scope [bold green]"all"[bold red] with exclude option!')
             sys.exit(1)
-        scope = {'cpu', 'gpus', 'ram', 'software', 'host', 'os', 'hdd', 'swap', 'network'}.difference(set(scope))
+        scope = {'cpu', 'gpus', 'ram', 'software', 'host', 'os', 'hdd', 'swap', 'network'}.difference(scope)
 
-    query_and_export(query_scope=list(scope),
+    query_and_export(query_scope=scope,
                      verbose=verbose,
                      export_format=output_format,
                      generate_html_table=generate_html_table,

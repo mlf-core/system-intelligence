@@ -129,11 +129,12 @@ class SoftwareInfo(BaseInfo):
 
         self.init_table(title='Python Packages', column_names=['Name', 'Version'])
 
-        for package, version in software_info['python']['packages'].items():
-            try:
-                package_version = version['version'].split('==')[1]
-            except IndexError:
-                package_version = version['version']
-            self.table.add_row(package, package_version)
+        if software_info['python']['packages'].items():
+            for package, version in software_info['python']['packages'].items():
+                try:
+                    package_version = version['version'].split('==')[1]
+                except IndexError:
+                    package_version = version['version']
+                self.table.add_row(package, package_version)
 
-        self.print_table()
+            self.print_table()

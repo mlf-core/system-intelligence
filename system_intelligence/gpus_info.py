@@ -2,7 +2,6 @@ import typing as t
 from rich import print
 
 from .base_info import BaseInfo
-from .util.unit_conversion_util import bytes_to_hreadable_string, hz_to_hreadable_string
 
 
 class QueryError(RuntimeError):
@@ -65,9 +64,9 @@ class GpusInfo(BaseInfo):
                 'architecture': compute_capability_to_architecture[compute_capability[0]],
                 'brand': device.name(),
                 'compute_capability': str(float('.'.join(str(_) for _ in compute_capability))),
-                'memory': bytes_to_hreadable_string(device.total_memory()),
-                'memory_clock': hz_to_hreadable_string(attributes[cuda.device_attribute.MEMORY_CLOCK_RATE]),
-                'clock': hz_to_hreadable_string(attributes[cuda.device_attribute.CLOCK_RATE]),
+                'memory': GpusInfo.format_bytes(device.total_memory()),
+                'memory_clock': GpusInfo.hz_to_hreadable_string(attributes[cuda.device_attribute.MEMORY_CLOCK_RATE]),
+                'clock': GpusInfo.hz_to_hreadable_string(attributes[cuda.device_attribute.CLOCK_RATE]),
                 'multiprocessors': str(multiprocessors),
                 'cores': str(cuda_cores),
                 'warp_size': str(attributes[cuda.device_attribute.WARP_SIZE])
@@ -103,10 +102,10 @@ class GpusInfo(BaseInfo):
         """
         Print info on any GPUs on the users system
         """
-        column_names = ['Architecture', 'Brand', 'Compute Capability', 'Memory', 'Memory Clock', 'Multiprocessors', 'Cores', 'Warp Size']
-        self.init_table(title='Graphical Processing Unit', column_names=column_names)
+        if gpus_info:
+            column_names = ['Architecture', 'Brand', 'Compute Capability', 'Memory', 'Memory Clock', 'Multiprocessors', 'Cores', 'Warp Size']
+            self.init_table(title='Graphical Processing Unit', column_names=column_names)
+            for gpu in gpus_info:
+                self.table.add_row(*gpu.values())
 
-        for gpu in gpus_info:
-            self.table.add_row(*gpu.values())
-
-        self.print_table()
+            self.print_table()

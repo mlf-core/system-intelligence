@@ -114,22 +114,6 @@ class CpuInfo(BaseInfo):
         """
         return {lvl: CpuInfo._get_cache_size(self, lvl, cpuinfo_data) for lvl in range(1, 4)}
 
-    @staticmethod
-    def format_bytes(size: int):
-        """
-        Format an integer representing a byte value into a nicer format.
-        Examples:
-            1234 = 1KB
-            123456 = 1MB
-        """
-        power = 2 ** 10
-        n = 0
-        power_labels = {0: '', 1: 'K', 2: 'M', 3: 'G'}
-        while size > power:
-            size /= power
-            n += 1
-        return f'{int(size)} {power_labels[n]}B'
-
     def print_cpu_info(self, cpu_info: dict) -> None:
         """
         Print all Infos available for CPUs for the users operating system

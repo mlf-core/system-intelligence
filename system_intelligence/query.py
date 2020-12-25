@@ -8,7 +8,7 @@ from ruamel.yaml import YAML
 from json2html import *  # noqa F403
 
 
-def query_and_export(query_scope: list,
+def query_and_export(query_scope: set,
                      verbose: bool,
                      export_format: str,
                      generate_html_table: bool,
@@ -21,7 +21,7 @@ def query_and_export(query_scope: list,
         export(info, export_format, generate_html_table, output)
 
 
-def query(query_scope: list, verbose: bool, **kwargs) -> t.Any:
+def query(query_scope: set, verbose: bool, **kwargs) -> t.Any:
     """
     Wrap around selected system query functions.
     """
@@ -34,8 +34,8 @@ def query(query_scope: list, verbose: bool, **kwargs) -> t.Any:
             'swap': {},
             'network': {},
             'software': {}}
-    if query_scope == ['all']:
-        query_scope = ['host', 'os', 'network', 'cpu', 'gpus', 'ram', 'hdd', 'swap', 'software']
+    if query_scope == {'all'}:
+        query_scope = ['host', 'os', 'swap', 'network', 'cpu', 'gpus', 'ram', 'hdd', 'software']
 
     for query in query_scope:
         querier_class = getattr(importlib.import_module(f'system_intelligence.{query}_info'), f'{query.capitalize()}Info')

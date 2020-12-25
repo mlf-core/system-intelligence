@@ -8,7 +8,6 @@ from rich import print
 
 from .base_info import BaseInfo
 from .util.process_util import is_process_accessible
-from .util.unit_conversion_util import bytes_to_hreadable_string, hz_to_hreadable_string
 
 _LOG = logging.getLogger(__name__)
 
@@ -203,16 +202,15 @@ class RamInfo(BaseInfo):
                                    bank['vendor'],
                                    bank['description'],
                                    bank['slot'],
-                                   f'{bytes_to_hreadable_string(bank["memory"])} /'
-                                   f'{bytes_to_hreadable_string(ram_info["total"])}',
-                                   hz_to_hreadable_string(bank['clock']))
+                                   f'{RamInfo.format_bytes(bank["memory"])} /'
+                                   f'{RamInfo.format_bytes(ram_info["total"])}',
+                                   RamInfo.hz_to_hreadable_string(bank['clock']))
             self.print_table()
 
             self.init_table(title='Random-Access Memory Cache', column_names=['Slot', 'Physid', 'Capacity'])
 
             for cache in ram_info['cache']:
-                self.table.add_row(cache['slot'], cache['physid'], bytes_to_hreadable_string(cache['capacity']))
-
+                self.table.add_row(cache['slot'], cache['physid'], RamInfo.format_bytes(cache['capacity']))
             self.print_table()
 
     def print_total_memory(self, ram_info_total: str) -> None:
@@ -220,5 +218,5 @@ class RamInfo(BaseInfo):
         Print the total memory table
         """
         self.init_table(title='Random Access Memory', column_names=['Total Memory'])
-        self.table.add_row(f'{bytes_to_hreadable_string(ram_info_total)}')
+        self.table.add_row(f'{RamInfo.format_bytes(int(ram_info_total))}')
         self.print_table()

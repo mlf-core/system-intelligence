@@ -5,7 +5,6 @@ import psutil
 from rich import print
 
 from .base_info import BaseInfo
-from .util.unit_conversion_util import bytes_to_hreadable_string
 
 
 class HddInfo(BaseInfo):
@@ -67,9 +66,9 @@ class HddInfo(BaseInfo):
                 if 'cdrom' in part.opts or part.fstype == '':
                     continue
             usage = psutil.disk_usage(part.mountpoint)
-            hdd_to_usage[part.device] = {'total': bytes_to_hreadable_string(usage.total),
-                                         'used': bytes_to_hreadable_string(usage.used),
-                                         'free': bytes_to_hreadable_string(usage.free),
+            hdd_to_usage[part.device] = {'total': HddInfo.format_bytes(usage.total),
+                                         'used': HddInfo.format_bytes(usage.used),
+                                         'free': HddInfo.format_bytes(usage.free),
                                          'percentage': str(usage.percent),
                                          'fstype': part.fstype,
                                          'mountpoint': part.mountpoint}
