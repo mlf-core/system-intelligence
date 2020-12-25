@@ -1,9 +1,11 @@
 import typing as t
 import psutil
+from .util.register_decorator import register
 
 from .base_info import BaseInfo
 
 
+@register
 class NetworkInfo(BaseInfo):
     """
     Query some network info

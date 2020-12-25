@@ -1,9 +1,11 @@
 import platform
 from rich import print
+from .util.register_decorator import register
 
 from .base_info import BaseInfo
 
 
+@register
 class OsInfo(BaseInfo):
     """
     Print the users OS

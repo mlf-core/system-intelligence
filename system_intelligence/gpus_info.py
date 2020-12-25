@@ -1,5 +1,6 @@
 import typing as t
 from rich import print
+from .util.register_decorator import register
 
 from .base_info import BaseInfo
 
@@ -28,6 +29,7 @@ except (ModuleNotFoundError, ImportError):
     is_CUDA_available = False
 
 
+@register
 class GpusInfo(BaseInfo):
     """
     Query any info on GPUs available for the users system (currently only supports NVIDIA GPUs)

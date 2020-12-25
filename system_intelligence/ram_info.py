@@ -5,6 +5,7 @@ import typing as t
 from xml.etree import ElementTree as ET
 import psutil
 from rich import print
+from .util.register_decorator import register
 
 from .base_info import BaseInfo
 from .util.process_util import is_process_accessible
@@ -12,6 +13,7 @@ from .util.process_util import is_process_accessible
 _LOG = logging.getLogger(__name__)
 
 
+@register
 class RamInfo(BaseInfo):
     """
     Bla

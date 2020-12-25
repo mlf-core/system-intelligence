@@ -3,10 +3,12 @@ import os
 import typing as t
 import psutil
 from rich import print
+from .util.register_decorator import register
 
 from .base_info import BaseInfo
 
 
+@register
 class HddInfo(BaseInfo):
     """
     Provide any available info on HDDs on the users system
