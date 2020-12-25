@@ -2,11 +2,11 @@ import logging
 import subprocess
 import typing as t
 from rich import print
-from .util.register_decorator import register
 
 from .base_info import BaseInfo
 
 _LOG = logging.getLogger(__name__)
+
 
 try:
     import cpuinfo
@@ -31,7 +31,6 @@ except ImportError:
     print('[bold yellow]Unable to import package psutil. CPU and Network information may be limited.')
 
 
-@register
 class CpuInfo(BaseInfo):
     """
     Info class to collect info about the CPU on the users operating system

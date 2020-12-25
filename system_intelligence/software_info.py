@@ -4,14 +4,12 @@ import logging
 import shutil
 import subprocess
 import typing as t
-from .util.register_decorator import register
 
 from .base_info import BaseInfo
 
 _LOG = logging.getLogger(__name__)
 
 
-@register
 class SoftwareInfo(BaseInfo):
     """
     Query info on software available on the users system
@@ -130,12 +128,12 @@ class SoftwareInfo(BaseInfo):
         self.print_table()
 
         self.init_table(title='Python Packages', column_names=['Name', 'Version'])
+        if software_info['python']['packages'].items():
+            for package, version in software_info['python']['packages'].items():
+                try:
+                    package_version = version['version'].split('==')[1]
+                except IndexError:
+                    package_version = version['version']
+                self.table.add_row(package, package_version)
 
-        for package, version in software_info['python']['packages'].items():
-            try:
-                package_version = version['version'].split('==')[1]
-            except IndexError:
-                package_version = version['version']
-            self.table.add_row(package, package_version)
-
-        self.print_table()
+            self.print_table()

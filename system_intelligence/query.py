@@ -3,9 +3,9 @@
 import json
 import pathlib
 import typing as t
+import importlib
 from ruamel.yaml import YAML
 from json2html import *  # noqa F403
-from .util.register_decorator import QUERIER
 
 
 def query_and_export(query_scope: set,
@@ -38,7 +38,7 @@ def query(query_scope: set, verbose: bool, **kwargs) -> t.Any:
         query_scope = ['host', 'os', 'swap', 'network', 'cpu', 'gpus', 'ram', 'hdd', 'software']
 
     for query in query_scope:
-        querier_class = QUERIER[f'{query.capitalize()}Info']
+        querier_class = getattr(importlib.import_module(f'system_intelligence.{query}_info'), f'{query.capitalize()}Info')
         instance = querier_class()
         query_info = getattr(instance, f'query_{query}')()
         info[query] = query_info
