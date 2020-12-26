@@ -21,3 +21,6 @@ jobs:
 
       - name: Build system_intelligence
         run: pip install .
+
+      - name: Run system_intelligence
+        run: system-intelligence all

@@ -91,4 +91,3 @@ class BaseInfo:
         f = ('%.2f' % hz).rstrip('0').rstrip('.')
 
         return f'{f} {suffixes[i]}'
-
