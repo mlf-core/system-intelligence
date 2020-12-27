@@ -1,5 +1,4 @@
 import platform
-import sys
 import plistlib
 import subprocess
 from pathlib import Path
@@ -48,4 +47,3 @@ class HostInfo(BaseInfo):
         print(f'[bold blue]Hostname: {host["hostname"]}')
         if 'model marketing name' in host.keys():
             print(f'[bold blue]Model name: {host["model marketing name"]}')
-

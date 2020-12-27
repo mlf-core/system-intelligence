@@ -1,5 +1,3 @@
-"""Functions to query system's swap memory."""
-
 import typing as t
 import psutil
 from rich import print
@@ -29,4 +27,4 @@ class SwapInfo(BaseInfo):
         """
         Print info about swap memory (total size)
         """
-        print(f'[bold blue]Swap size: {str(swap)}')
+        print(f'[bold blue]Swap size: {self.format_bytes(swap)}')

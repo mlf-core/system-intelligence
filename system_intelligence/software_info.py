@@ -1,5 +1,3 @@
-"""Functions to query presence of relevant software."""
-
 import logging
 import shutil
 import subprocess
@@ -18,56 +16,35 @@ class SoftwareInfo(BaseInfo):
         super().__init__()
         self.DEFAULT_VERSION_QUERY_FLAG = '--version'
 
-        # Second argument is the version_tuple
+        # Value is the version_tuple, key the corresponding package or software
         # First element of the tuple is an overwrite version flag
         # Second element of the tuple is an overwrite line number
         self.VERSION_QUERY_FLAGS = {
-            # compilers
-            'gcc': (None, None),
-            'g++': (None, None),
-            'gfortran': (None, None),
-            'clang': (None, None),
-            'clang++': (None, None),
-            'flang': (None, None),
-            'pgcc': (None, None),
-            'pgc++': (None, None),
-            'pgfortran': (None, None),
-            'icc': (None, None),
-            'icpc': (None, None),
-            'ifort': (None, None),
-            'mpicc': (None, None),
-            'mpic++': (None, None),
-            'mpifort': (None, None),
-            # python
-            'python': (None, None),
-            'pip': (None, None),
-            # other
+            **dict.fromkeys(['gcc', 'g++', 'gfortran', 'clang', 'clang++', 'flang', 'pgcc', 'pgc++',
+                             'pgfortran', 'icc', 'icpc', 'ifort', 'mpicc', 'mpic++',
+                             'mpifort', 'python', 'pip', 'ruby', 'mpirun', 'spack'], (None, None)),
             'nvcc': (None, 3),  # CUDA
             'mkl': ('python -c "import mkl; print(mkl.get_version_string())"', None),
-            'java': ('-version', None),
-            'ruby': (None, None),
-            'mpirun': (None, None),
-            'spack': (None, None)
+            'java': ('-version', None)
         }
 
-        self.PYTHON_PACKAGES = [
+        self.PYTHON_PACKAGES = {
             'chainer', 'Cython', 'h5py', 'ipython', 'mpi4py', 'Nuitka', 'numba', 'numpy',
             'pandas', 'pycuda', 'pyopencl', 'scikit-learn', 'scipy', 'tensorflow', 'pytorch',
             'xgboost'
-        ]
+        }
 
     def query_software(self):
-        """Get information about relevant software."""
+        """
+        Get information about relevant software.
+        """
         no_path_exceptions = ['mkl']
         software_info = {}
         for program, version_tuple in self.VERSION_QUERY_FLAGS.items():
             path = shutil.which(program)
             if path is None and program not in no_path_exceptions:
                 continue
-            if version_tuple[0] is None:
-                version_flag = self.DEFAULT_VERSION_QUERY_FLAG
-            else:
-                version_flag = version_tuple[0]
+            version_flag = version_tuple[0] if version_tuple[0] else self.DEFAULT_VERSION_QUERY_FLAG
             # The package cannot be found -> It must be one of the exceptions
             if not path:
                 cmd = [version_flag]
@@ -78,13 +55,7 @@ class SoftwareInfo(BaseInfo):
             software_info[program] = {'path': path, 'version': version}
 
         # python packages
-        py_packages = {}
-        for package in self.PYTHON_PACKAGES:
-            version = SoftwareInfo._run_version_query(f'python -m pip freeze | grep {package}')
-            if version is None:
-                continue
-            py_packages[package] = {'version': version}
-        software_info['python']['packages'] = py_packages
+        self.query_python_packages(software_info)
 
         return software_info
 
@@ -115,6 +86,19 @@ class SoftwareInfo(BaseInfo):
         except IndexError:
             version = version_raw
         return version
+
+    def query_python_packages(self, software_info: dict) -> None:
+        """
+        Query versions of the python packages (if installed)
+        """
+        py_packages = {}
+        packages = subprocess.check_output(['python', '-m', 'pip', 'freeze']).decode('utf-8').split('\n')
+        package_set = {package[0]: package[1] for package in [s.split("==") for s in packages] if len(package) == 2}
+        for package in package_set.keys():
+            if package in self.PYTHON_PACKAGES:
+                version = package_set[package]
+                py_packages[package] = {'version': version}
+        software_info['python']['packages'] = py_packages
 
     def print_software_info(self, software_info: dict):
         """
