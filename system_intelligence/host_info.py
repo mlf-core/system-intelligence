@@ -1,7 +1,11 @@
 import platform
+import sys
+import plistlib
+import subprocess
+from pathlib import Path
 from rich import print
 
-from.base_info import BaseInfo
+from .base_info import BaseInfo
 
 
 class HostInfo(BaseInfo):
@@ -11,16 +15,37 @@ class HostInfo(BaseInfo):
     def __init__(self):
         super().__init__()
 
-    def query_host(self) -> str:
+    def query_host(self) -> dict:
         """
         Get information about current host.
         """
-        hostname = platform.node()
+        host = {'hostname': platform.node()}
+        if self.OS == 'darwin':
+            # get model identifier from sysctl
+            model = subprocess.check_output(["/usr/sbin/sysctl", "-n", "hw.model"]).strip().decode('utf-8')
+            plist_file_path = Path("/System/Library/PrivateFrameworks/ServerInformation.framework/Versions/A/Resources/"
+                                   "en.lproj/SIMachineAttributes.plist")
+            # in older versions of MacOS: en.lproj -> English.lproj
+            if not plist_file_path.is_file():
+                plist_file_path = Path("/System/Library/PrivateFrameworks/ServerInformation.framework/Versions/A/"
+                                       "Resources/English.lproj/SIMachineAttributes.plist")
 
-        return hostname
+            # read property list file
+            plist = plistlib.readPlist(str(plist_file_path))
 
-    def print_host_info(self, hostname):
+            # check, whether the model obtained from sysctl is in the property list file
+            if model in plist:
+                host['model marketing name'] = plist[model]["_LOCALIZABLE_"]["marketingModel"]
+            else:
+                host['model marketing name'] = model
+
+        return host
+
+    def print_host_info(self, host):
         """
-        Print users hostname
+        Print users hostname. Additionally, on MacOS, try to print the model marketing name.
         """
-        print(f'[bold blue]Hostname: {hostname}')
+        print(f'[bold blue]Hostname: {host["hostname"]}')
+        if host['model marketing name']:
+            print(f'[bold blue]Model name: {host["model marketing name"]}')
+
