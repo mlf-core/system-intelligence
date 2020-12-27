@@ -22,10 +22,10 @@ class SoftwareInfo(BaseInfo):
         self.VERSION_QUERY_FLAGS = {
             **dict.fromkeys(['gcc', 'g++', 'gfortran', 'clang', 'clang++', 'flang', 'pgcc', 'pgc++',
                              'pgfortran', 'icc', 'icpc', 'ifort', 'mpicc', 'mpic++',
-                             'mpifort', 'python', 'pip', 'ruby', 'mpirun', 'spack'], (None, None)),
+                             'mpifort', 'python', 'pip', 'ruby', 'mpirun', 'spack'], (None, 0)),
             'nvcc': (None, 3),  # CUDA
-            'mkl': ('python -c "import mkl; print(mkl.get_version_string())"', None),
-            'java': ('-version', None)
+            'mkl': ('python -c "import mkl; print(mkl.get_version_string())"', 0),
+            'java': ('-version', 0)
         }
 
         self.PYTHON_PACKAGES = {
@@ -61,28 +61,29 @@ class SoftwareInfo(BaseInfo):
 
     @staticmethod
     def _run_version_query(cmd, version_line=None) -> t.Optional[str]:
+        # shell is currently only required to obtain the mkl version
         shell_required = True if len(cmd) < 2 or isinstance(cmd, str) else False
         try:
             result, error = subprocess.Popen(cmd, universal_newlines=True, shell=shell_required,
                                              stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
         except(subprocess.TimeoutExpired, subprocess.CalledProcessError):
             return None
+        # this could be the case, for example, if a command was malformed
         except FileNotFoundError:
             return None
         version_raw = result
-        if error and not version_raw:
-            if 'Traceback' in error or 'Check the permissions and owner of that directory.' in error:
-                version_raw, error = None, None
+        # it was not possible to obtain some results from the version call
+        if not version_raw:
+            # if there was nothing written to stderr or a permission denied error (traceback in case of mkl, for now))
+            # return none
+            if not error or 'Traceback' in error or 'Check the permissions and owner of that directory.' in error:
+                return None
             else:
                 # When automatically written to stderr -> e.g. java -version writes to stderr
                 version_raw = error
-        if not error and not version_raw:
-            return None
+        # split the result into lines and take the line, where the version is stated (usually it is the first line)
         try:
-            if version_line:
-                version = version_raw.splitlines()[version_line]
-            else:
-                version = version_raw.splitlines()[0]
+            version = version_raw.splitlines()[version_line]
         except IndexError:
             version = version_raw
         return version
@@ -92,8 +93,12 @@ class SoftwareInfo(BaseInfo):
         Query versions of the python packages (if installed)
         """
         py_packages = {}
+        # get all packages installed to the current env
         packages = subprocess.check_output(['python', '-m', 'pip', 'freeze']).decode('utf-8').split('\n')
+        # split every package into its name and version number
         package_set = {package[0]: package[1] for package in [s.split("==") for s in packages] if len(package) == 2}
+        # for every installed package, check whether its a package important for SI
+        # if this is the case, add it's name and version number to the installed python packages displayed by SI
         for package in package_set.keys():
             if package in self.PYTHON_PACKAGES:
                 version = package_set[package]
