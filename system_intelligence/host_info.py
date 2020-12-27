@@ -46,6 +46,6 @@ class HostInfo(BaseInfo):
         Print users hostname. Additionally, on MacOS, try to print the model marketing name.
         """
         print(f'[bold blue]Hostname: {host["hostname"]}')
-        if host['model marketing name']:
+        if 'model marketing name' in host.keys():
             print(f'[bold blue]Model name: {host["model marketing name"]}')
 
