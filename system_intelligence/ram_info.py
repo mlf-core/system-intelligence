@@ -14,7 +14,7 @@ _LOG = logging.getLogger(__name__)
 
 class RamInfo(BaseInfo):
     """
-    Bla
+    Get info on RAM
     """
 
     def __init__(self):
@@ -34,8 +34,11 @@ class RamInfo(BaseInfo):
         total_ram = self.query_ram_total()
         ram: t.Dict[str, t.Any] = {'total': total_ram, 'banks': {}}
 
+        # query ram info for MacOS
         if self.OS == 'darwin':
             self.query_ram_macos(ram)
+        elif self.OS == 'win32':
+            self.query_ram_windows(ram)
         else:
             ram_banks, ram_cache = self.query_ram_banks_cache(sudo=sudo, **kwargs)
             ram['cache'] = {}
@@ -71,6 +74,27 @@ class RamInfo(BaseInfo):
             ram['banks']['BANK ' + ram_slot_details[0]] = {k: v for k, v in ram_slot_details_set.items() if k in
                                                            {'Size', 'Type', 'Speed', 'Serial Number'}}
         return ram
+
+    def query_ram_windows(self, ram: t.Dict[str, t.Any]) -> t.Dict[str, t.Any]:
+        """
+        Query RAM info under windows
+        """
+        cmd = (['wmic', 'MemoryChip', 'get', 'BankLabel,', 'Capacity,' 'Description,', 'Manufacturer,', 'Speed', '/format:csv'])
+        # get ram info as a "csv" like string
+        ram_info_csv = subprocess.check_output(cmd).strip().decode()
+        # replace newline and carriage returns by splitting into lines
+        # first line of the resulting list are the attributes names, so slice it off
+        ram_info_stripped = [line for line in ram_info_csv.splitlines() if line][1:]
+        # for each RAM slot, add info into ram dict
+        for slot in ram_info_stripped:
+            # the attributes values are comma separated, so split them; order is as follows
+            # 1. Node, 2. BankLabel, 3. Capacity (in bytes), 4. Description, 5. Manufacturer, 6. Speed (in HZ)
+            slot_attributes = slot.split(',')
+            bank_name = slot_attributes[1]
+            ram['banks'][bank_name] = {k: v for k, v in zip(['Capacity', 'Description', 'Manufacturer', 'Speed'],
+                                                         slot_attributes[2:])}
+        return ram
+
 
     def query_ram_banks_cache(self, sudo: bool = False, **_) -> t.Tuple[t.List[t.Mapping[str, t.Any]], t.List[t.Mapping[str, t.Any]]]:
         """
@@ -175,7 +199,7 @@ class RamInfo(BaseInfo):
         """
         Print all available RAM info for the users operating system
         """
-        # print all infos on RAM available on MacOS
+        # run on MacOS
         if self.OS == 'darwin':
             column_names = ['Slot', 'Type', 'Size', 'Speed', 'Serial Number']
             self.init_table(title='Random Access Memory Banks', column_names=column_names)
@@ -189,34 +213,49 @@ class RamInfo(BaseInfo):
             self.print_table()
             self.print_total_memory(ram_info["total"])
 
-        # Not run with sudo -> only total memory accessible (on Linux)
-        elif os.geteuid() != 0:
-            print(self.print_total_memory(ram_info["total"]))
-        else:
-            column_names = ['Product', 'Serial', 'Vendor', 'Description', 'Slot', 'Memory / Memory Total', 'Clock']
+        # run on windows
+        elif self.OS == 'win32':
+            column_names = ['Slot', 'Capacity', 'Description', 'Manufacturer', 'Speed']
             self.init_table(title='Random Access Memory Banks', column_names=column_names)
-
-            for bank in ram_info['banks']:
-                self.table.add_row(bank['product'],
-                                   bank['serial'],
-                                   bank['vendor'],
-                                   bank['description'],
-                                   bank['slot'],
-                                   f'{RamInfo.format_bytes(bank["memory"])} /'
-                                   f'{RamInfo.format_bytes(ram_info["total"])}',
-                                   RamInfo.hz_to_hreadable_string(bank['clock']))
+            for ram_bank_slot in ram_info['banks']:
+                details = ram_info['banks'][ram_bank_slot]
+                self.table.add_row(ram_bank_slot,
+                                   self.format_bytes(details['Capacity']),
+                                   details['Description'],
+                                   details['Manufacturer'],
+                                   self.hz_to_hreadable_string(details['Speed']))
             self.print_table()
+            self.print_total_memory(ram_info['total'])
 
-            self.init_table(title='Random-Access Memory Cache', column_names=['Slot', 'Physid', 'Capacity'])
+        # run on linux
+        elif self.OS == 'linux':
+            if os.geteuid() != 0:
+                print(self.print_total_memory(ram_info['total']))
+            else:
+                column_names = ['Product', 'Serial', 'Vendor', 'Description', 'Slot', 'Memory / Memory Total', 'Clock']
+                self.init_table(title='Random Access Memory Banks', column_names=column_names)
 
-            for cache in ram_info['cache']:
-                self.table.add_row(cache['slot'], cache['physid'], RamInfo.format_bytes(cache['capacity']))
-            self.print_table()
+                for bank in ram_info['banks']:
+                    self.table.add_row(bank['product'],
+                                       bank['serial'],
+                                       bank['vendor'],
+                                       bank['description'],
+                                       bank['slot'],
+                                       f'{RamInfo.format_bytes(bank["memory"])} /'
+                                       f'{RamInfo.format_bytes(ram_info["total"])}',
+                                       RamInfo.hz_to_hreadable_string(bank['clock']))
+                self.print_table()
+
+                self.init_table(title='Random-Access Memory Cache', column_names=['Slot', 'Physid', 'Capacity'])
+
+                for cache in ram_info['cache']:
+                    self.table.add_row(cache['slot'], cache['physid'], RamInfo.format_bytes(cache['capacity']))
+                self.print_table()
 
     def print_total_memory(self, ram_info_total: str) -> None:
         """
         Print the total memory table
         """
         self.init_table(title='Random Access Memory', column_names=['Total Memory'])
-        self.table.add_row(f'{RamInfo.format_bytes(int(ram_info_total))}')
+        self.table.add_row(f'{RamInfo.format_bytes(ram_info_total)}')
         self.print_table()
