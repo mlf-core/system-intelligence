@@ -10,6 +10,10 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Added**
 
+* Updated documentation
+
+* Updated PyPi classifiers
+
 **Fixed**
 
 **Dependencies**

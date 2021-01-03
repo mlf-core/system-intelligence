@@ -4,9 +4,7 @@
 Installation
 ============
 
-Please note that system-intelligence currently only offers support for Linux.
-It will very likely also work well on MacOS, but it is unlikely to work on Windows.
-If you want to improve the Windows support please get in touch.
+System-intelligence supports all three major platforms: Linux, MacOS and Windows
 
 Stable release
 --------------
@@ -37,18 +35,11 @@ You can either clone the public repository:
 
     $ git clone git://github.com/mlf-core/system-intelligence
 
-Or download the `tarball`_:
+Once you have a copy of the source and are in the top level directory, you can install it with:
 
 .. code-block:: console
 
-    $ curl -OJL https://github.com/mlf-core/system-intelligence/tarball/master
-
-Once you have a copy of the source, you can install it with:
-
-.. code-block:: console
-
-    $ python setup.py install
+    $ pip install .
 
 
 .. _Github repo: https://github.com/mlfcore/system-intelligence
-.. _tarball: https://github.com/mlfcore/system-intelligence/tarball/master
