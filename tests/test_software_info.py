@@ -3,11 +3,12 @@
 import collections.abc
 import unittest
 
-from system_intelligence.software_info import query_software
+from system_intelligence.software_info import SoftwareInfo
 
 
 class Tests(unittest.TestCase):
 
     def test_query_software(self):
-        info = query_software()
+        sw_info = SoftwareInfo()
+        info = sw_info.query_software()
         self.assertIsInstance(info, collections.abc.Mapping)

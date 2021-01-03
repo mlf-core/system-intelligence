@@ -5,6 +5,35 @@ Changelog
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 
+2.0.0 (2021-01-03)
+------------------
+
+**Added**
+
+* Complete support for MacOS
+* Complete support for Windows
+* Modelname query for MacOS
+* Python 3.9 WFs for all GitHub Actions
+* Run system-intelligence WF after build
+* Multiple comments and docstrings
+* Redesigned code structure to more OOP concept
+* RAM memory attributes will now be displayed in Bytes (was Hertz)
+
+**Fixed**
+
+* Accelerated software query (about 5 times faster now)
+* Fixed a bug that causes SI to crash and not generate a html report
+  when path given via cli option was different to the cwd
+
+**Dependencies**
+
+* plistlib (from std lib)
+
+**Deprecated**
+
+* Unit-util file (most functions are now part of the base info class)
+
+
 1.2.4 (2020-08-20)
 ------------------
 

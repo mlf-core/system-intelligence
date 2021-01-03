@@ -1,108 +1,101 @@
-"""Functions to query system's hard drives."""
-
 import itertools
 import os
 import typing as t
-
 import psutil
-from rich.console import Console
 from rich import print
 
-from .util.rich_util import create_styled_table
-from .util.unit_conversion_util import bytes_to_hreadable_string
-
-IGNORED_DEVICE_PATHS = {'/dm', '/loop', '/md'}
-
-try:
-    import pyudev
-
-    pyudev.Context()
-except ImportError:
-    pyudev = None
-    print('[bold yellow]Unable to import package pyudev. HDD information may be limited.')
-
-HDD = pyudev is not None
+from .base_info import BaseInfo
 
 
-def query_hdd():
-    hdd_models = query_hdd_model()
-    hdd_usage = query_hdd_usage()
+class HddInfo(BaseInfo):
+    """
+    Provide any available info on HDDs on the users system
+    """
 
-    return {'model': hdd_models, 'usage': hdd_usage}
+    def __init__(self):
+        super().__init__()
+        self.IGNORED_DEVICE_PATHS = {'/dm', '/loop', '/md'}
+        if self.OS == 'linux':
+            import pyudev
+            self.context = pyudev.Context()
+        else:
+            pyudev = None
+            print('[bold yellow]Unable to import package pyudev. HDD information may be limited.')
+        self.HDD = pyudev is not None
 
+    def query_hdd(self):
+        """
+        Query info on any available HDDs on the users system
+        """
+        hdd_models = self.query_hdd_model()
+        hdd_usage = self.query_hdd_usage()
 
-def query_hdd_model() -> t.Dict[str, dict]:
-    """Get information about all hard drives."""
-    if not HDD:
-        return {}
-    context = pyudev.Context()
-    hdds = {}
-    for device in context.list_devices(subsystem='block', DEVTYPE='disk'):
-        if any(_ in device.device_path for _ in IGNORED_DEVICE_PATHS):
-            continue
-        hdd = {'size': device.attributes.asint('size')}
-        for device_ in itertools.chain([device], device.ancestors):
-            try:
-                hdd['model'] = device_.attributes.asstring('model')
-                break
-            except KeyError:
-                hdd['model'] = ''
-        hdds[device.device_node] = hdd
+        return {'model': hdd_models, 'usage': hdd_usage}
 
-    return hdds
-
-
-def query_hdd_usage() -> t.Dict[t.Any, t.Dict[str, str]]:
-    hdd_to_usage = {}
-    for part in psutil.disk_partitions(all=False):
-        if os.name == 'nt':
-            # skip cd-rom drives with no disk in it; they may raise ENOENT,
-            # pop-up a Windows GUI error for a non-ready partition or just hang.
-            if 'cdrom' in part.opts or part.fstype == '':
+    def query_hdd_model(self) -> t.Dict[str, dict]:
+        """
+        Get information about all hard drives.
+        """
+        if not self.HDD:
+            return {}
+        hdds = {}
+        for device in self.context.list_devices(subsystem='block', DEVTYPE='disk'):
+            if any(_ in device.device_path for _ in self.IGNORED_DEVICE_PATHS):
                 continue
-        usage = psutil.disk_usage(part.mountpoint)
-        hdd_to_usage[part.device] = {'total': bytes_to_hreadable_string(usage.total),
-                                     'used': bytes_to_hreadable_string(usage.used),
-                                     'free': bytes_to_hreadable_string(usage.free),
-                                     'percentage': str(usage.percent),
-                                     'fstype': part.fstype,
-                                     'mountpoint': part.mountpoint}
+            hdd = {'size': device.attributes.asint('size')}
+            for device_ in itertools.chain([device], device.ancestors):
+                try:
+                    hdd['model'] = device_.attributes.asstring('model')
+                    break
+                except KeyError:
+                    hdd['model'] = ''
+            hdds[device.device_node] = hdd
 
-    return hdd_to_usage
+        return hdds
 
+    def query_hdd_usage(self) -> t.Dict[t.Any, t.Dict[str, str]]:
+        """
+        Query info on any HDD usage on the users system
+        """
+        hdd_to_usage = {}
+        for part in psutil.disk_partitions(all=False):
+            if os.name == 'nt':
+                # skip cd-rom drives with no disk in it; they may raise ENOENT,
+                # pop-up a Windows GUI error for a non-ready partition or just hang.
+                if 'cdrom' in part.opts or part.fstype == '':
+                    continue
+            usage = psutil.disk_usage(part.mountpoint)
+            hdd_to_usage[part.device] = {'total': self.format_bytes(usage.total),
+                                         'used': self.format_bytes(usage.used),
+                                         'free': self.format_bytes(usage.free),
+                                         'percentage': str(usage.percent),
+                                         'fstype': part.fstype,
+                                         'mountpoint': part.mountpoint}
 
-def print_hdd_info(hdd_info: dict) -> None:
-    # Models
-    table = create_styled_table('Hard Disks Drives')
+        return hdd_to_usage
 
-    table.add_column('Disk Name', justify='left')
-    table.add_column('Model', justify='left')
+    def print_hdd_info(self, hdd_info: dict) -> None:
+        """
+        Print info on any available HDDs on the users system
+        """
+        # Models
+        self.init_table(title='Hard Disks Drives', column_names=['Disk Name', 'Model'])
 
-    for hdd, details in hdd_info['model'].items():
-        table.add_row(hdd, details['model'])
-        #  bytes_to_hreadable_string(details['size']) <- Removed since it may be misleading
+        for hdd, details in hdd_info['model'].items():
+            self.table.add_row(hdd, details['model'])
 
-    console = Console()
-    console.print(table)
+        self.print_table()
 
-    # Usage
-    table = create_styled_table('Disk Usage')
+        # Usage
+        self.init_table(title='Disk Usage', column_names=['Device', 'Total', 'Used', 'Free', 'Use %', 'Type', 'Mount'])
 
-    table.add_column('Device', justify='left')
-    table.add_column('Total', justify='left')
-    table.add_column('Used', justify='left')
-    table.add_column('Free', justify='left')
-    table.add_column('Use %', justify='left')
-    table.add_column('Type', justify='left')
-    table.add_column('Mount', justify='left')
+        for device, usage in hdd_info['usage'].items():
+            self.table.add_row(device,
+                               usage['total'],
+                               usage['used'],
+                               usage['free'],
+                               usage['percentage'],
+                               usage['fstype'],
+                               usage['mountpoint'])
 
-    for device, usage in hdd_info['usage'].items():
-        table.add_row(device,
-                      usage['total'],
-                      usage['used'],
-                      usage['free'],
-                      usage['percentage'],
-                      usage['fstype'],
-                      usage['mountpoint'])
-
-    console.print(table)
+        self.print_table()
