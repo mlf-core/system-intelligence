@@ -39,17 +39,18 @@ test_requirements = ['pytest>=3', ]
 setup(
     author="Lukas Heumos",
     author_email='lukas.heumos@posteo.net',
-    python_requires='>=3.5',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: Apache Software License',
         'Natural Language :: English',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Operating System :: Microsoft :: Windows :: Windows 10',
+        'Operating System :: MacOS :: MacOS X',
+        'Operating System :: POSIX :: Linux'
     ],
     description="Query your system for all hardware and software related information.",
     entry_points={
@@ -74,6 +75,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/zethson/system_intelligence',
-    version='2.0.0',
+    version='2.0.1',
     zip_safe=False,
 )
