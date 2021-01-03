@@ -65,13 +65,13 @@ class RamInfo(BaseInfo):
         cmd = (['system_profiler', 'SPMemoryDataType'])
         ram_info = subprocess.check_output(cmd).decode('utf-8')
         # split the BANKs (like "slots") into different items
-        ram_banks = [e.strip() for e in ram_info.split('BANK') if e][1:]
+        ram_banks = [attribute.strip() for attribute in ram_info.split('BANK') if attribute][1:]
 
-        # for each RAM slot, extract details
+        # for each RAM slot extract details
         for i in range(0, len(ram_banks)):
-            ram_slot_details = [e.strip() for e in ram_banks[i].split('\n') if e]
-            ram_slot_details_set = {el.split(':')[0].strip(): el.split(':')[1].strip() for el in ram_slot_details}
-            ram['banks']['BANK ' + ram_slot_details[0]] = {k: v for k, v in ram_slot_details_set.items() if k in
+            ram_slot_details = [attribute.strip() for attribute in ram_banks[i].split('\n') if attribute]
+            ram_slot_details_set = {attribute_detail.split(':')[0].strip(): attribute_detail.split(':')[1].strip() for attribute_detail in ram_slot_details}
+            ram['banks']['BANK ' + ram_slot_details[0]] = {attribute: value for attribute, value in ram_slot_details_set.items() if attribute in
                                                            {'Size', 'Type', 'Speed', 'Serial Number'}}
         return ram
 
@@ -91,10 +91,8 @@ class RamInfo(BaseInfo):
             # 1. Node, 2. BankLabel, 3. Capacity (in bytes), 4. Description, 5. Manufacturer, 6. Speed (in HZ)
             slot_attributes = slot.split(',')
             bank_name = slot_attributes[1]
-            ram['banks'][bank_name] = {k: v for k, v in zip(['Capacity', 'Description', 'Manufacturer', 'Speed'],
-                                                         slot_attributes[2:])}
+            ram['banks'][bank_name] = {k: v for k, v in zip(['Capacity', 'Description', 'Manufacturer', 'Speed'], slot_attributes[2:])}
         return ram
-
 
     def query_ram_banks_cache(self, sudo: bool = False, **_) -> t.Tuple[t.List[t.Mapping[str, t.Any]], t.List[t.Mapping[str, t.Any]]]:
         """
@@ -241,15 +239,15 @@ class RamInfo(BaseInfo):
                                        bank['vendor'],
                                        bank['description'],
                                        bank['slot'],
-                                       f'{RamInfo.format_bytes(bank["memory"])} /'
-                                       f'{RamInfo.format_bytes(ram_info["total"])}',
+                                       f'{self.format_bytes(bank["memory"], device="ram")} /'
+                                       f'{self.format_bytes(ram_info["total"], device="ram")}',
                                        RamInfo.hz_to_hreadable_string(bank['clock']))
                 self.print_table()
 
                 self.init_table(title='Random-Access Memory Cache', column_names=['Slot', 'Physid', 'Capacity'])
 
                 for cache in ram_info['cache']:
-                    self.table.add_row(cache['slot'], cache['physid'], RamInfo.format_bytes(cache['capacity']))
+                    self.table.add_row(cache['slot'], cache['physid'], self.format_bytes(cache['capacity']))
                 self.print_table()
 
     def print_total_memory(self, ram_info_total: str) -> None:
@@ -257,5 +255,5 @@ class RamInfo(BaseInfo):
         Print the total memory table
         """
         self.init_table(title='Random Access Memory', column_names=['Total Memory'])
-        self.table.add_row(f'{RamInfo.format_bytes(ram_info_total)}')
+        self.table.add_row(f'{self.format_bytes(ram_info_total, device="ram")}')
         self.print_table()

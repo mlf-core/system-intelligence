@@ -27,4 +27,5 @@ class SwapInfo(BaseInfo):
         """
         Print info about swap memory (total size)
         """
-        print(f'[bold blue]Swap size: {self.format_bytes(swap)}')
+        swap_mem = self.format_bytes(swap)
+        print(f'[bold blue]Swap size: {swap_mem if swap_mem else "NA"}')

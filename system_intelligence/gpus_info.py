@@ -10,15 +10,6 @@ class QueryError(RuntimeError):
     """
 
 
-compute_capability_to_architecture = {
-    2: 'Fermi',
-    3: 'Kepler',
-    5: 'Maxwell',
-    6: 'Pascal',
-    7: 'Volta',
-    8: 'Ampere'
-}
-
 try:
     import pycuda
     import pycuda.driver as cuda
@@ -34,6 +25,14 @@ class GpusInfo(BaseInfo):
     """
     def __init__(self):
         super().__init__()
+        self.compute_capability_to_architecture = {
+            2: 'Fermi',
+            3: 'Kepler',
+            5: 'Maxwell',
+            6: 'Pascal',
+            7: 'Volta',
+            8: 'Ampere'
+        }
 
     def query_gpus(self, **_) -> t.List[t.Mapping[str, t.Any]]:
         """
@@ -46,12 +45,11 @@ class GpusInfo(BaseInfo):
         gpus = []
         for i in range(cuda.Device.count()):
             device = cuda.Device(i)
-            gpus.append(GpusInfo.query_gpu(device))
+            gpus.append(self.query_gpu(device))
 
         return gpus
 
-    @staticmethod
-    def query_gpu(device: 'cuda.Device') -> t.Mapping[str, t.Any]:
+    def query_gpu(self, device: 'cuda.Device') -> t.Mapping[str, t.Any]:
         """
         Get information about a given GPU.
         """
@@ -60,11 +58,17 @@ class GpusInfo(BaseInfo):
         multiprocessors = attributes[cuda.device_attribute.MULTIPROCESSOR_COUNT]
         cuda_cores = GpusInfo.calculate_cuda_cores(compute_capability, multiprocessors)
         try:
+            try:
+                compute_cap_arch = self.compute_capability_to_architecture[compute_capability[0]]
+            # compute capability in case its not implemented in SI yet
+            except KeyError:
+                compute_cap_arch = "Unknown"
+               
             return {
-                'architecture': compute_capability_to_architecture[compute_capability[0]],
+                'architecture': compute_cap_arch,
                 'brand': device.name(),
                 'compute_capability': str(float('.'.join(str(_) for _ in compute_capability))),
-                'memory': GpusInfo.format_bytes(device.total_memory()),
+                'memory': GpusInfo.format_bytes(self, device.total_memory()),
                 'memory_clock': GpusInfo.hz_to_hreadable_string(attributes[cuda.device_attribute.MEMORY_CLOCK_RATE]),
                 'clock': GpusInfo.hz_to_hreadable_string(attributes[cuda.device_attribute.CLOCK_RATE]),
                 'multiprocessors': str(multiprocessors),

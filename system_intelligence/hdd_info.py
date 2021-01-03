@@ -28,7 +28,7 @@ class HddInfo(BaseInfo):
         Query info on any available HDDs on the users system
         """
         hdd_models = self.query_hdd_model()
-        hdd_usage = HddInfo.query_hdd_usage()
+        hdd_usage = self.query_hdd_usage()
 
         return {'model': hdd_models, 'usage': hdd_usage}
 
@@ -53,8 +53,7 @@ class HddInfo(BaseInfo):
 
         return hdds
 
-    @staticmethod
-    def query_hdd_usage() -> t.Dict[t.Any, t.Dict[str, str]]:
+    def query_hdd_usage(self) -> t.Dict[t.Any, t.Dict[str, str]]:
         """
         Query info on any HDD usage on the users system
         """
@@ -66,9 +65,9 @@ class HddInfo(BaseInfo):
                 if 'cdrom' in part.opts or part.fstype == '':
                     continue
             usage = psutil.disk_usage(part.mountpoint)
-            hdd_to_usage[part.device] = {'total': HddInfo.format_bytes(usage.total),
-                                         'used': HddInfo.format_bytes(usage.used),
-                                         'free': HddInfo.format_bytes(usage.free),
+            hdd_to_usage[part.device] = {'total': self.format_bytes(usage.total),
+                                         'used': self.format_bytes(usage.used),
+                                         'free': self.format_bytes(usage.free),
                                          'percentage': str(usage.percent),
                                          'fstype': part.fstype,
                                          'mountpoint': part.mountpoint}

@@ -57,7 +57,7 @@ class CpuInfo(BaseInfo):
 
         return {
             'vendor_id_raw': cpu.get('vendor_id_raw'),
-            'hardware_raw': cpu.get('hardware_raw') if self.OS == 'linux' else '',
+            'hardware_raw': cpu.get('hardware_raw') if self.OS == 'linux' else 'NA',
             'brand_raw': cpu.get('brand_raw'),
             'arch': cpu.get('arch'),
             'logical_cores': str(logical_cores),
@@ -107,7 +107,7 @@ class CpuInfo(BaseInfo):
         else:
             cache_size = cpuinfo_data.get(f'l{level}_data_cache_size', cpuinfo_data.get(f'l{level}_cache_size', None))
         # return cache size in nicely formatted bytes unit
-        return CpuInfo.format_bytes(cache_size)
+        return self.format_bytes(cache_size, device='cpu_cache')
 
     def _get_cache_sizes(self, cpuinfo_data: dict) -> t.Mapping[int, t.Optional[int]]:
         """
