@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Changelog &mdash; system-intelligence 1.2.4 documentation</title>
+  <title>Changelog &mdash; system-intelligence 2.0.0 documentation</title>
   
 
   
@@ -30,7 +30,6 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -62,7 +61,7 @@
             
             
               <div class="version">
-                1.2.4
+                2.0.0
               </div>
             
           
@@ -94,13 +93,14 @@
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="authors.html">Credits</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Changelog</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id1">1.2.4 (2020-08-20)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id2">1.2.3 (2020-08-18)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">1.2.2 (2020-07-06)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id4">1.2.1 (2020-06-25)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id5">1.2.0 (2020-06-24)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id6">1.1.0 (2020-06-23)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id7">1.0.0 (2020-06-23)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">2.0.0 (2021-01-03)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">1.2.4 (2020-08-20)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">1.2.3 (2020-08-18)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">1.2.2 (2020-07-06)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">1.2.1 (2020-06-25)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">1.2.0 (2020-06-24)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">1.1.0 (2020-06-23)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">1.0.0 (2020-06-23)</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="code_of_conduct.html">Contributor Covenant Code of Conduct</a></li>
@@ -173,7 +173,35 @@
 <h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h1>
 <p>This project adheres to <a class="reference external" href="https://semver.org/">Semantic Versioning</a>.</p>
 <div class="section" id="id1">
-<h2>1.2.4 (2020-08-20)<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>2.0.0 (2021-01-03)<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p><strong>Added</strong></p>
+<ul class="simple">
+<li><p>Complete support for MacOS</p></li>
+<li><p>Complete support for Windows</p></li>
+<li><p>Modelname query for MacOS</p></li>
+<li><p>Python 3.9 WFs for all GitHub Actions</p></li>
+<li><p>Run system-intelligence WF after build</p></li>
+<li><p>Multiple comments and docstrings</p></li>
+<li><p>Redesigned code structure to more OOP concept</p></li>
+<li><p>RAM memory attributes will now be displayed in Bytes (was Hertz)</p></li>
+</ul>
+<p><strong>Fixed</strong></p>
+<ul class="simple">
+<li><p>Accelerated software query (about 5 times faster now)</p></li>
+<li><p>Fixed a bug that causes SI to crash and not generate a html report
+when path given via cli option was different to the cwd</p></li>
+</ul>
+<p><strong>Dependencies</strong></p>
+<ul class="simple">
+<li><p>plistlib (from std lib)</p></li>
+</ul>
+<p><strong>Deprecated</strong></p>
+<ul class="simple">
+<li><p>Unit-util file (most functions are now part of the base info class)</p></li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h2>1.2.4 (2020-08-20)<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <p><strong>Added</strong></p>
 <ul class="simple">
 <li><p>Richified all prints</p></li>
@@ -182,8 +210,8 @@
 <p><strong>Dependencies</strong></p>
 <p><strong>Deprecated</strong></p>
 </div>
-<div class="section" id="id2">
-<h2>1.2.3 (2020-08-18)<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id3">
+<h2>1.2.3 (2020-08-18)<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p><strong>Added</strong></p>
 <ul class="simple">
 <li><p>mkl to supported software to query for</p></li>
@@ -195,8 +223,8 @@
 <p><strong>Dependencies</strong></p>
 <p><strong>Deprecated</strong></p>
 </div>
-<div class="section" id="id3">
-<h2>1.2.2 (2020-07-06)<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id4">
+<h2>1.2.2 (2020-07-06)<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <p><strong>Added</strong></p>
 <p><strong>Fixed</strong></p>
 <ul class="simple">
@@ -206,8 +234,8 @@
 <p><strong>Dependencies</strong></p>
 <p><strong>Deprecated</strong></p>
 </div>
-<div class="section" id="id4">
-<h2>1.2.1 (2020-06-25)<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id5">
+<h2>1.2.1 (2020-06-25)<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <p><strong>Added</strong></p>
 <p><strong>Fixed</strong></p>
 <ul class="simple">
@@ -216,8 +244,8 @@
 <p><strong>Dependencies</strong></p>
 <p><strong>Deprecated</strong></p>
 </div>
-<div class="section" id="id5">
-<h2>1.2.0 (2020-06-24)<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id6">
+<h2>1.2.0 (2020-06-24)<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <p><strong>Added</strong></p>
 <ul class="simple">
 <li><p>html table output via –generate_html_table</p></li>
@@ -226,8 +254,8 @@
 <p><strong>Dependencies</strong></p>
 <p><strong>Deprecated</strong></p>
 </div>
-<div class="section" id="id6">
-<h2>1.1.0 (2020-06-23)<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id7">
+<h2>1.1.0 (2020-06-23)<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
 <p><strong>Added</strong></p>
 <ul class="simple">
 <li><p>Python packages to stdout</p></li>
@@ -239,8 +267,8 @@
 <p><strong>Dependencies</strong></p>
 <p><strong>Deprecated</strong></p>
 </div>
-<div class="section" id="id7">
-<h2>1.0.0 (2020-06-23)<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id8">
+<h2>1.0.0 (2020-06-23)<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
 <p><strong>Added</strong></p>
 <ul class="simple">
 <li><p>Scopes all, Hostname, OS, CPU, GPUs, RAM, HDDs, Network and Software</p></li>
