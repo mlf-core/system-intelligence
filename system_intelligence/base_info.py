@@ -133,4 +133,3 @@ class BaseInfo:
             return 1000
         # if the user os isn't either Linux Ubuntu nor MacOS use base2 conversion
         return 1024
-

@@ -63,7 +63,6 @@ class GpusInfo(BaseInfo):
             # compute capability in case its not implemented in SI yet
             except KeyError:
                 compute_cap_arch = "Unknown"
-               
             return {
                 'architecture': compute_cap_arch,
                 'brand': device.name(),
