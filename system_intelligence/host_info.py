@@ -30,7 +30,8 @@ class HostInfo(BaseInfo):
                                        "Resources/English.lproj/SIMachineAttributes.plist")
 
             # read property list file
-            plist = plistlib.load(plist_file_path)
+            with open(plist_file_path, 'rb') as fp:
+                plist = plistlib.load(fp)
 
             # check, whether the model obtained from sysctl is in the property list file
             if model in plist:
