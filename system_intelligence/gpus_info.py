@@ -106,7 +106,7 @@ class GpusInfo(BaseInfo):
         Print info on any GPUs on the users system
         """
         if gpus_info:
-            column_names = ['Architecture', 'Brand', 'Compute Capability', 'Memory', 'Memory Clock', 'Multiprocessors', 'Cores', 'Warp Size']
+            column_names = ['Architecture', 'Brand', 'Compute Capability', 'Memory', 'Memory Clock', 'Clock','Multiprocessors', 'Cores', 'Warp Size']
             self.init_table(title='Graphical Processing Unit', column_names=column_names)
             for gpu in gpus_info:
                 self.table.add_row(*gpu.values())
