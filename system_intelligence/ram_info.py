@@ -228,7 +228,7 @@ class RamInfo(BaseInfo):
         # run on linux
         elif self.OS == 'linux':
             if os.geteuid() != 0:
-                print(self.print_total_memory(ram_info['total']))
+                self.print_total_memory(ram_info['total'])
             else:
                 column_names = ['Product', 'Serial', 'Vendor', 'Description', 'Slot', 'Memory / Memory Total', 'Clock']
                 self.init_table(title='Random Access Memory Banks', column_names=column_names)
