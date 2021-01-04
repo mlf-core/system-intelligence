@@ -35,7 +35,7 @@ As an example you may run
 
     $ system-intelligence all --output_format json --output info.json
 
-As with version 2.0.0, you can also run queries by querying all scopes except for some of them.
+As of version 2.0.0, you can also run queries by querying all scopes except for some of them.
 An example, where one queries every scope except RAM and Software, would look like the following:
 
 .. code-block:: console
