@@ -80,7 +80,7 @@ To generate such report in a file called result.html above the current working d
 
 .. code-block:: console
 
-    $ system_intelligence all -f json -g -o ../result.html
+    $ system_intelligence all -f json -g -o result.html
 
 Note, that under Windows, this must be:
 
