@@ -86,7 +86,7 @@ Note, that under Windows, this must be:
 
 .. code-block:: console
 
-    $ system_intelligence all -f json -g -o ..\result.html
+    $ system_intelligence all -f json -g -o result.html
 
 Module
 ---------
