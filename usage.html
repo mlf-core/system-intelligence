@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Usage &mdash; system-intelligence 2.0.0 documentation</title>
+  <title>Usage &mdash; system-intelligence 2.0.1 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                2.0.0
+                2.0.1
               </div>
             
           
@@ -92,6 +92,9 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#command-line-interface">command-line interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#system-intelligence-on-macos">System-intelligence on MacOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#system-intelligence-on-windows">System-intelligence on Windows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generate-html-report">Generate HTML report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module">Module</a></li>
 </ul>
 </li>
@@ -188,8 +191,42 @@ The installation instructions can be found <a class="reference external" href="h
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> system-intelligence all --output_format json --output info.json
 </pre></div>
 </div>
+<p>As of version 2.0.0, you can also run queries by querying all scopes except for some of them.
+An example, where one queries every scope except RAM and Software, would look like the following:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> system-intelligence -e ram software
+</pre></div>
+</div>
 <p>To suppress the standard output you may add the option</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> system_intelligence &lt;scope&gt; --silent
+</pre></div>
+</div>
+</div>
+<div class="section" id="system-intelligence-on-macos">
+<h2>System-intelligence on MacOS<a class="headerlink" href="#system-intelligence-on-macos" title="Permalink to this headline">¶</a></h2>
+<p>As with version 2.0.0, system-intelligence can also query under MacOS. However,
+there are a few peculiarities:</p>
+<p>1.) Querying host will also display the model marketing name of the users device (if available)</p>
+<p>2.) As RAM info on MacOS is limited compared to Linux or Windows, the RAM query will only display
+Slot, Type, Size, Speed and Serial Number of each RAM slot as well as the total memory size</p>
+<p>3.) There is no need to run it with sudo, since it’s not required like in Linux for example</p>
+<p>4.) All memory size units (so every Byte unit) is displayed using base10, as this is ‘Darwin’s’ way to compute such units</p>
+<p>5.) The L1 Cache in the CPU query summarizes the L1i cache and the L1d cache together</p>
+</div>
+<div class="section" id="system-intelligence-on-windows">
+<h2>System-intelligence on Windows<a class="headerlink" href="#system-intelligence-on-windows" title="Permalink to this headline">¶</a></h2>
+<p>As with version 2.0.0, system-intelligence can also query under Windows. There are only a few minor things different to whats displayed under linux:</p>
+<p>1.) L1 CPU cache size is not available (as for now) and thus will be not displayed</p>
+<p>2.) Size units (bytes basically) are displayed using base2 computation as this is how Windows computes those numbers</p>
+</div>
+<div class="section" id="generate-html-report">
+<h2>Generate HTML report<a class="headerlink" href="#generate-html-report" title="Permalink to this headline">¶</a></h2>
+<p>System-intelligence can not only print the results to stdout, but is also capable of creating nice HTML reports that can be included in your research or appliaction.
+To generate such report in a file called result.html above the current working directory simply run the following:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> system_intelligence all -f json -g -o result.html
+</pre></div>
+</div>
+<p>Note, that under Windows, this must be:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> system_intelligence all -f json -g -o result.html
 </pre></div>
 </div>
 </div>
