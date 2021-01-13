@@ -171,33 +171,33 @@
 <div class="section" id="command-line-interface">
 <h2>command-line interface<a class="headerlink" href="#command-line-interface" title="Permalink to this headline">¶</a></h2>
 <p>To get an overview of system-intelligence run</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> system-intelligence --help
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>system-intelligence --help
 </pre></div>
 </div>
 <p>system-intelligence queries your system for hardware and software related information.
 Available scopes are ‘all’, ‘cpu’, ‘gpus’, ‘ram’, ‘host’, ‘os’, ‘hdd’, ‘swap’, ‘network’, ‘software’.
 To query for your desired scope run</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> system-intelligence &lt;scope&gt; &lt;optionally more scopes&gt; ... &lt;optionally more scopes&gt;
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>system-intelligence &lt;scope&gt; &lt;optionally more scopes&gt; ... &lt;optionally more scopes&gt;
 </pre></div>
 </div>
 <p>If system-intelligence is run with scope ‘all’, all other scopes will be queried for.
 Please note, that for GPU support you need to have <a class="reference external" href="https://documen.tician.de/pycuda/">pycuda</a> installed.
 The installation instructions can be found <a class="reference external" href="https://wiki.tiker.net/PyCuda/Installation/Linux/Ubuntu">here</a>.</p>
 <p>To save all results into a file run</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> system-intelligence &lt;scope&gt; --output_format &lt;raw/json/yml&gt; --output &lt;name_of_file.output_format&gt;
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>system-intelligence &lt;scope&gt; --output_format &lt;raw/json/yml&gt; --output &lt;name_of_file.output_format&gt;
 </pre></div>
 </div>
 <p>As an example you may run</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> system-intelligence all --output_format json --output info.json
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>system-intelligence all --output_format json --output info.json
 </pre></div>
 </div>
 <p>As of version 2.0.0, you can also run queries by querying all scopes except for some of them.
 An example, where one queries every scope except RAM and Software, would look like the following:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> system-intelligence -e ram software
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>system-intelligence -e ram software
 </pre></div>
 </div>
 <p>To suppress the standard output you may add the option</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> system_intelligence &lt;scope&gt; --silent
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>system_intelligence &lt;scope&gt; --silent
 </pre></div>
 </div>
 </div>
@@ -222,11 +222,11 @@ Slot, Type, Size, Speed and Serial Number of each RAM slot as well as the total 
 <h2>Generate HTML report<a class="headerlink" href="#generate-html-report" title="Permalink to this headline">¶</a></h2>
 <p>System-intelligence can not only print the results to stdout, but is also capable of creating nice HTML reports that can be included in your research or appliaction.
 To generate such report in a file called result.html above the current working directory simply run the following:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> system_intelligence all -f json -g -o result.html
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>system_intelligence all -f json -g -o result.html
 </pre></div>
 </div>
 <p>Note, that under Windows, this must be:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> system_intelligence all -f json -g -o result.html
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>system_intelligence all -f json -g -o result.html
 </pre></div>
 </div>
 </div>
