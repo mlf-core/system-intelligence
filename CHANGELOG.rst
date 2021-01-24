@@ -14,6 +14,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Dependencies**
 
+* less strict pin of rich and click
+
 **Deprecated**
 
 
