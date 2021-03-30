@@ -1,3 +1,5 @@
-Sphinx==2.4.4
-sphinx-automodapi==0.12
--r ../requirements.txt
+Sphinx==3.5.3
+sphinx_rtd_theme==0.5.1
+sphinx-automodapi==0.13
+sphinx_click
+click

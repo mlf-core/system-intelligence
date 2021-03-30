@@ -1,1 +1,1 @@
-"""Unit test package for system_intelligence."""
+"""Test suite for the system_intelligence package."""

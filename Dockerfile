@@ -4,6 +4,6 @@ FROM python:3.8.1-alpine
 RUN apk update
 RUN apk add make automake gcc g++ git
 
-RUN pip install system_intelligence
+RUN pip install system-intelligence
 
-CMD system_intelligence
+CMD system-intelligence
