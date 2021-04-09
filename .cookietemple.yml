@@ -1,12 +1,15 @@
 domain: cli
 language: python
 project_slug: system_intelligence
+project_slug_no_hyphen: system_intelligence
 template_version: '1.0.0 # <<COOKIETEMPLE_NO_BUMP>>'
 template_handle: cli-python
 github_username: zethson
+creator_github_username: Imipenem
 is_github_repo: true
 is_repo_private: false
 is_github_orga: true
+github_orga: mlf-core
 full_name: Lukas Heumos
 email: lukas.heumos@posteo.net
 project_name: system-intelligence
