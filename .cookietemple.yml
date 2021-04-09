@@ -1,6 +1,6 @@
 domain: cli
 language: python
-project_slug: system_intelligence
+project_slug: system-intelligence
 project_slug_no_hyphen: system_intelligence
 template_version: '1.0.0 # <<COOKIETEMPLE_NO_BUMP>>'
 template_handle: cli-python
