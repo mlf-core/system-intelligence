@@ -4,5 +4,5 @@ pint==0.17
 psutil==5.8.0
 py-cpuinfo==8.0.0
 pyudev==0.22.0
-ruamel.yaml==0.17.10
+ruamel.yaml==0.17.21
 json2html==1.3.0
