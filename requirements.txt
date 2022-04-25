@@ -1,6 +1,6 @@
 click>=7.1.2
 rich>=9.13.0
-pint==0.17
+pint==0.19.2
 psutil==5.8.0
 py-cpuinfo==8.0.0
 pyudev==0.22.0
